@@ -97,17 +97,17 @@ class ReferenceLookup {
         }
         boolean isExternal = !absPointerString.startsWith("#");
         JSONPointer pointer = isExternal
-                ? JSONPointer.forURL(ls.httpClient, absPointerString)
-                : JSONPointer.forDocument(ls.rootSchemaJson, absPointerString);
+            ? JSONPointer.forURL(ls.httpClient, absPointerString)
+            : JSONPointer.forDocument(ls.rootSchemaJson, absPointerString);
         ReferenceSchema.Builder refBuilder = ReferenceSchema.builder()
-                .refValue(relPointerString);
+            .refValue(relPointerString);
         ls.pointerSchemas.put(absPointerString, refBuilder);
         JSONPointer.QueryResult result = pointer.query();
         JSONObject resultObject = extend(withoutRef(ctx), result.getQueryResult());
         SchemaLoader childLoader = ls.initChildLoader()
-                .resolutionScope(isExternal ? withoutFragment(absPointerString) : ls.id)
-                .schemaJson(resultObject)
-                .rootSchemaJson(result.getContainingDocument()).build();
+            .resolutionScope(isExternal ? withoutFragment(absPointerString) : ls.id)
+            .schemaJson(resultObject)
+            .rootSchemaJson(result.getContainingDocument()).build();
         Schema referredSchema = childLoader.load().build();
         refBuilder.build().setReferredSchema(referredSchema);
         return refBuilder;
