@@ -46,28 +46,28 @@ public class EmptySchemaTest {
     @Test
     public void testOnlySchemaDescription() {
         JSONObject actual = json(null, "descr", null);
-        Assert.assertEquals(1, JSONObject.getNames(actual).length);
+        Assert.assertEquals(1, JSONObjectUtils.getNames(actual).length);
         Assert.assertEquals("descr", actual.get("description"));
     }
 
     @Test
     public void testOnlyTitle() {
         JSONObject actual = json("my title", null, null);
-        Assert.assertEquals(1, JSONObject.getNames(actual).length);
+        Assert.assertEquals(1, JSONObjectUtils.getNames(actual).length);
         Assert.assertEquals("my title", actual.get("title"));
     }
 
     @Test
     public void testOnlyId() {
         JSONObject actual = json(null, null, "my/id");
-        Assert.assertEquals(1, JSONObject.getNames(actual).length);
+        Assert.assertEquals(1, JSONObjectUtils.getNames(actual).length);
         Assert.assertEquals("my/id", actual.get("id"));
     }
 
     @Test
     public void testAllGenericProps() {
         JSONObject actual = json("my title", "my description", "my/id");
-        Assert.assertEquals(3, JSONObject.getNames(actual).length);
+        Assert.assertEquals(3, JSONObjectUtils.getNames(actual).length);
     }
 
     @Test

@@ -199,7 +199,7 @@ public class ObjectSchema extends Schema {
     }
 
     private FluentIterable<String> getAdditionalProperties(final JSONObject subject) {
-        String[] names = JSONObject.getNames(subject);
+        String[] names = JSONObjectUtils.getNames(subject);
         if (names == null) {
             return FluentIterable.from(Lists.<String>newArrayList());
         } else {
@@ -303,7 +303,7 @@ public class ObjectSchema extends Schema {
     }
 
     private List<ValidationException> testPatternProperties(final JSONObject subject) {
-        String[] propNames = JSONObject.getNames(subject);
+        String[] propNames = JSONObjectUtils.getNames(subject);
         if (propNames == null || propNames.length == 0) {
             return Collections.emptyList();
         }

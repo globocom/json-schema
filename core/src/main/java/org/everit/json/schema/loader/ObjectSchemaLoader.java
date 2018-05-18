@@ -1,6 +1,7 @@
 package org.everit.json.schema.loader;
 
 import org.everit.json.schema.Consumer;
+import org.everit.json.schema.JSONObjectUtils;
 import org.everit.json.schema.ObjectSchema;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +72,7 @@ class ObjectSchemaLoader {
         }
         if (ls.schemaJson.has("patternProperties")) {
             JSONObject patternPropsJson = ls.schemaJson.getJSONObject("patternProperties");
-            String[] patterns = JSONObject.getNames(patternPropsJson);
+            String[] patterns = JSONObjectUtils.getNames(patternPropsJson);
             if (patterns != null) {
                 for (String pattern : patterns) {
                     builder.patternProperty(pattern, defaultLoader.loadChild(patternPropsJson.getJSONObject(pattern))
@@ -89,8 +90,8 @@ class ObjectSchemaLoader {
     }
 
     private void populatePropertySchemas(JSONObject propertyDefs,
-            ObjectSchema.Builder builder) {
-        String[] names = JSONObject.getNames(propertyDefs);
+                                         ObjectSchema.Builder builder) {
+        String[] names = JSONObjectUtils.getNames(propertyDefs);
         if (names == null || names.length == 0) {
             return;
         }
@@ -113,7 +114,7 @@ class ObjectSchemaLoader {
     }
 
     private void addDependencies(final ObjectSchema.Builder builder, final JSONObject deps) {
-        for (String name : JSONObject.getNames(deps)) {
+        for (String name : JSONObjectUtils.getNames(deps)) {
             addDependency(builder, name, deps.get(name));
         }
     }

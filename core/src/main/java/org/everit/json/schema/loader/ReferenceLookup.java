@@ -1,5 +1,6 @@
 package org.everit.json.schema.loader;
 
+import org.everit.json.schema.JSONObjectUtils;
 import org.everit.json.schema.ReferenceSchema;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.internal.JSONPointer;
@@ -23,11 +24,11 @@ class ReferenceLookup {
      * parameter is an empty object).
      */
     static JSONObject extend(final JSONObject additional, final JSONObject original) {
-        String[] additionalNames = JSONObject.getNames(additional);
+        String[] additionalNames = JSONObjectUtils.getNames(additional);
         if (additionalNames == null) {
             return original;
         }
-        String[] originalNames = JSONObject.getNames(original);
+        String[] originalNames = JSONObjectUtils.getNames(original);
         if (originalNames == null) {
             return additional;
         }
@@ -73,7 +74,7 @@ class ReferenceLookup {
      * key, in case it is present in {@code original}.
      */
     JSONObject withoutRef(JSONObject original) {
-        String[] names = JSONObject.getNames(original);
+        String[] names = JSONObjectUtils.getNames(original);
         if (names == null) {
             return original;
         }

@@ -75,7 +75,7 @@ public class EnumSchemaTest {
         StringWriter buffer = new StringWriter();
         subject().describeTo(new JSONPrinter(buffer));
         JSONObject actual = new JSONObject(buffer.getBuffer().toString());
-        assertEquals(2, JSONObject.getNames(actual).length);
+        assertEquals(2, JSONObjectUtils.getNames(actual).length);
         assertEquals("enum", actual.get("type"));
         JSONArray pv = new JSONArray(Arrays.asList(true, "foo"));
         assertEquals(asSet(pv), asSet(actual.getJSONArray("enum")));

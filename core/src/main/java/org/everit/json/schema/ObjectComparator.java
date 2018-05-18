@@ -61,7 +61,7 @@ public final class ObjectComparator {
     }
 
     private static String[] sortedNamesOf(final JSONObject obj) {
-        String[] raw = JSONObject.getNames(obj);
+        String[] raw = JSONObjectUtils.getNames(obj);
         if (raw == null) {
             return null;
         }
