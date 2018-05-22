@@ -230,28 +230,6 @@ public class ArraySchema extends Schema {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o instanceof ArraySchema) {
-            ArraySchema that = (ArraySchema) o;
-            return that.canEqual(this) &&
-                    uniqueItems == that.uniqueItems &&
-                    additionalItems == that.additionalItems &&
-                    requiresArray == that.requiresArray &&
-                    Objects.equals(minItems, that.minItems) &&
-                    Objects.equals(maxItems, that.maxItems) &&
-                    Objects.equals(allItemSchema, that.allItemSchema) &&
-                    Objects.equals(itemSchemas, that.itemSchemas) &&
-                    Objects.equals(schemaOfAdditionalItems, that.schemaOfAdditionalItems) &&
-                    super.equals(o);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     void describePropertiesTo(final JSONPrinter writer) throws JSONException {
         if (requiresArray) {
             writer.key("type").value("array");
@@ -279,14 +257,40 @@ public class ArraySchema extends Schema {
     }
 
     @Override
-    protected boolean canEqual(final Object other) {
-        return other instanceof ArraySchema;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArraySchema that = (ArraySchema) o;
+        return that.canEqual(this)
+                && uniqueItems == that.uniqueItems
+                && additionalItems == that.additionalItems
+                && requiresArray == that.requiresArray
+                && (minItems != null ? minItems.equals(that.minItems) : that.minItems == null)
+                && (maxItems != null ? maxItems.equals(that.maxItems) : that.maxItems == null)
+                && (allItemSchema != null ? allItemSchema.equals(that.allItemSchema) : that.allItemSchema == null)
+                && (itemSchemas != null ? itemSchemas.equals(that.itemSchemas) : that.itemSchemas == null)
+                && (schemaOfAdditionalItems != null ? schemaOfAdditionalItems.equals(that.schemaOfAdditionalItems) : that.schemaOfAdditionalItems == null)
+                && super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minItems, maxItems, uniqueItems, allItemSchema,
-                additionalItems, itemSchemas, requiresArray, schemaOfAdditionalItems);
+        int result = super.hashCode();
+        result = 31 * result + (minItems != null ? minItems.hashCode() : 0);
+        result = 31 * result + (maxItems != null ? maxItems.hashCode() : 0);
+        result = 31 * result + (uniqueItems ? 1 : 0);
+        result = 31 * result + (allItemSchema != null ? allItemSchema.hashCode() : 0);
+        result = 31 * result + (additionalItems ? 1 : 0);
+        result = 31 * result + (itemSchemas != null ? itemSchemas.hashCode() : 0);
+        result = 31 * result + (requiresArray ? 1 : 0);
+        result = 31 * result + (schemaOfAdditionalItems != null ? schemaOfAdditionalItems.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    protected boolean canEqual(final Object other) {
+        return other instanceof ArraySchema;
     }
 
     /**
