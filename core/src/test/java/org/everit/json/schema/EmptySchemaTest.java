@@ -17,6 +17,7 @@ package org.everit.json.schema;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,34 +39,34 @@ public class EmptySchemaTest {
         Assert.assertEquals("{}", EmptySchema.INSTANCE.toString());
     }
 
-    private JSONObject json(final String title, final String description, final String id) {
+    private JSONObject json(final String title, final String description, final String id) throws JSONException {
         return new JSONObject(EmptySchema.builder().title(title).description(description).id(id)
                 .build().toString());
     }
 
     @Test
-    public void testOnlySchemaDescription() {
+    public void testOnlySchemaDescription() throws Exception {
         JSONObject actual = json(null, "descr", null);
         Assert.assertEquals(1, JSONObjectUtils.getNames(actual).length);
         Assert.assertEquals("descr", actual.get("description"));
     }
 
     @Test
-    public void testOnlyTitle() {
+    public void testOnlyTitle() throws Exception {
         JSONObject actual = json("my title", null, null);
         Assert.assertEquals(1, JSONObjectUtils.getNames(actual).length);
         Assert.assertEquals("my title", actual.get("title"));
     }
 
     @Test
-    public void testOnlyId() {
+    public void testOnlyId() throws Exception {
         JSONObject actual = json(null, null, "my/id");
         Assert.assertEquals(1, JSONObjectUtils.getNames(actual).length);
         Assert.assertEquals("my/id", actual.get("id"));
     }
 
     @Test
-    public void testAllGenericProps() {
+    public void testAllGenericProps() throws Exception {
         JSONObject actual = json("my title", "my description", "my/id");
         Assert.assertEquals(3, JSONObjectUtils.getNames(actual).length);
     }

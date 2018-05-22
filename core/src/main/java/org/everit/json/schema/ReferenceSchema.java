@@ -20,6 +20,7 @@ import org.everit.json.schema.internal.JSONPrinter;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import org.json.JSONException;
 
 /**
  * This class is used by {@link org.everit.json.schema.loader.SchemaLoader} to resolve JSON pointers
@@ -130,7 +131,7 @@ public class ReferenceSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         writer.key("$ref");
         writer.value(refValue);
     }

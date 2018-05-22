@@ -17,6 +17,7 @@ package org.everit.json.schema.loader;
 
 import org.everit.json.schema.ResourceLoader;
 import org.everit.json.schema.loader.internal.DefaultSchemaClient;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -24,14 +25,22 @@ import java.io.InputStream;
 
 public class ResolutionScopeTest {
 
-    private static JSONObject ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("testschemas.json");
+    private static JSONObject ALL_SCHEMAS;
 
-    private JSONObject get(final String schemaName) {
+    static {
+        try {
+            ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("testschemas.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private JSONObject get(final String schemaName) throws JSONException {
         return ALL_SCHEMAS.getJSONObject(schemaName);
     }
 
     @Test
-    public void resolutionScopeTest() {
+    public void resolutionScopeTest() throws Exception {
         SchemaLoader.load(get("resolutionScopeTest"), new SchemaClient() {
 
             @Override

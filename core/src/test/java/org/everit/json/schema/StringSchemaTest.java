@@ -125,14 +125,14 @@ public class StringSchemaTest {
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         JSONObject rawSchemaJson = ResourceLoader.DEFAULT.readObj("tostring/stringschema.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         assertTrue(ObjectComparator.deepEquals(rawSchemaJson, new JSONObject(actual)));
     }
 
     @Test
-    public void toStringNoExplicitType() {
+    public void toStringNoExplicitType() throws Exception {
         JSONObject rawSchemaJson = ResourceLoader.DEFAULT.readObj("tostring/stringschema.json");
         rawSchemaJson.remove("type");
         String actual = SchemaLoader.load(rawSchemaJson).toString();

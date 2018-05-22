@@ -2,6 +2,8 @@ package org.everit.json.schema;
 
 import com.google.common.base.Preconditions;
 
+import org.json.JSONException;
+
 /**
  * Created by fpeter on 2017. 01. 16..
  */
@@ -13,7 +15,7 @@ public abstract class Consumer<T> {
         }
     };
 
-    public abstract void accept(T t);
+    public abstract void accept(T t) throws JSONException;
 
     /**
      * Returns a composed {@code Consumer} that performs, in sequence, this
@@ -32,7 +34,7 @@ public abstract class Consumer<T> {
         final Consumer<T> _this = this;
         return new Consumer<T>() {
             @Override
-            public void accept(T t) {
+            public void accept(T t) throws JSONException {
                 _this.accept(t);
                 after.accept(t);
             }

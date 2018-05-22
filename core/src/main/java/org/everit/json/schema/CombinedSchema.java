@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -254,7 +255,7 @@ public class CombinedSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         writer.key(criterion.toString());
         writer.array();
         for (Schema subschema : subschemas) {

@@ -51,7 +51,7 @@ public class ReferenceSchemaTest {
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         JSONObject rawSchemaJson = ResourceLoader.DEFAULT.readObj("tostring/ref.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         System.out.println(actual);

@@ -16,6 +16,7 @@
 package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -68,16 +69,20 @@ public class EnumSchema extends Schema {
     @Override
     public void validate(final Object subject) {
         for (Object val : possibleValues) {
-            if (ObjectComparator.deepEquals(val, subject)) {
-                //found one
-                return;
+            try {
+                if (ObjectComparator.deepEquals(val, subject)) {
+                    //found one
+                    return;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
         throw new ValidationException(this, String.format("%s is not a valid enum value", subject), "enum");
     }
 
     @Override
-    void describePropertiesTo(final JSONPrinter writer) {
+    void describePropertiesTo(final JSONPrinter writer) throws JSONException {
         writer.key("type");
         writer.value("enum");
         writer.key("enum");

@@ -16,6 +16,7 @@
 package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -221,7 +222,7 @@ public class NumberSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         if (requiresInteger) {
             writer.key("type").value("integer");
         } else if (requiresNumber) {

@@ -9,6 +9,7 @@ import org.everit.json.schema.*;
 import org.everit.json.schema.internal.*;
 import org.everit.json.schema.loader.SchemaLoader.SchemaLoaderBuilder;
 import org.everit.json.schema.loader.internal.DefaultSchemaClient;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,9 +24,17 @@ import static org.junit.Assert.assertTrue;
 
 public class SchemaLoaderTest {
 
-    private static JSONObject ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("testschemas.json");
+    private static JSONObject ALL_SCHEMAS;
 
-    private static JSONObject get(final String schemaName) {
+    static {
+        try {
+            ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("testschemas.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static JSONObject get(final String schemaName) throws Exception {
         return ALL_SCHEMAS.getJSONObject(schemaName);
     }
 
@@ -34,13 +43,13 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void booleanSchema() {
+    public void booleanSchema() throws Exception {
         BooleanSchema actual = (BooleanSchema) SchemaLoader.load(get("booleanSchema"));
         Assert.assertNotNull(actual);
     }
 
     @Test
-    public void builderhasDefaultFormatValidators() {
+    public void builderhasDefaultFormatValidators() throws Exception {
         SchemaLoader actual = SchemaLoader.builder().schemaJson(get("booleanSchema")).build();
         assertTrue(actual.getFormatValidator("date-time").get() instanceof DateTimeFormatValidator);
         assertTrue(actual.getFormatValidator("uri").get() instanceof URIFormatValidator);
@@ -58,7 +67,7 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void customFormat() {
+    public void customFormat() throws Exception {
         Schema subject = SchemaLoader.builder()
                 .schemaJson(get("customFormat"))
                 .addFormatValidator(new AbstractFormatValidator() {
@@ -77,32 +86,32 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void emptyPatternProperties() {
+    public void emptyPatternProperties() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("emptyPatternProperties"));
         Assert.assertNotNull(actual);
         assertEquals(0, actual.getPatternProperties().size());
     }
 
     @Test
-    public void emptySchema() {
+    public void emptySchema() throws Exception {
         assertTrue(SchemaLoader.load(get("emptySchema")) instanceof EmptySchema);
     }
 
     @Test
-    public void emptySchemaWithDefault() {
+    public void emptySchemaWithDefault() throws Exception {
         EmptySchema actual = (EmptySchema) SchemaLoader.load(get("emptySchemaWithDefault"));
         Assert.assertNotNull(actual);
     }
 
     @Test
-    public void enumSchema() {
+    public void enumSchema() throws Exception {
         EnumSchema actual = (EnumSchema) SchemaLoader.load(get("enumSchema"));
         Assert.assertNotNull(actual);
         assertEquals(4, actual.getPossibleValues().size());
     }
 
     @Test
-    public void genericProperties() {
+    public void genericProperties() throws Exception {
         Schema actual = SchemaLoader.load(get("genericProperties"));
         assertEquals("myId", actual.getId());
         assertEquals("my title", actual.getTitle());
@@ -110,7 +119,7 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void integerSchema() {
+    public void integerSchema() throws Exception {
         NumberSchema actual = (NumberSchema) SchemaLoader.load(get("integerSchema"));
         assertEquals(10, actual.getMinimum().intValue());
         assertEquals(20, actual.getMaximum().intValue());
@@ -121,38 +130,38 @@ public class SchemaLoaderTest {
     }
 
     @Test(expected = SchemaException.class)
-    public void invalidExclusiveMinimum() {
+    public void invalidExclusiveMinimum() throws Exception {
         SchemaLoader.load(get("invalidExclusiveMinimum"));
     }
 
     @Test(expected = SchemaException.class)
-    public void invalidIntegerSchema() {
+    public void invalidIntegerSchema() throws Exception {
         JSONObject input = get("invalidIntegerSchema");
         SchemaLoader.load(input);
     }
 
     @Test(expected = SchemaException.class)
-    public void invalidStringSchema() {
+    public void invalidStringSchema() throws Exception {
         SchemaLoader.load(get("invalidStringSchema"));
     }
 
     @Test(expected = SchemaException.class)
-    public void invalidType() {
+    public void invalidType() throws Exception {
         SchemaLoader.load(get("invalidType"));
     }
 
     @Test
-    public void jsonPointerInArray() {
+    public void jsonPointerInArray() throws Exception {
         assertTrue(SchemaLoader.load(get("jsonPointerInArray")) instanceof ArraySchema);
     }
 
     @Test
-    public void multipleTypes() {
+    public void multipleTypes() throws Exception {
         assertTrue(SchemaLoader.load(get("multipleTypes")) instanceof CombinedSchema);
     }
 
     @Test
-    public void implicitAnyOfLoadsTypeProps() {
+    public void implicitAnyOfLoadsTypeProps() throws Exception {
         CombinedSchema schema = (CombinedSchema) SchemaLoader.load(get("multipleTypesWithProps"));
         StringSchema stringSchema = FluentIterable.from(schema.getSubschemas())
                 .firstMatch(Predicates.instanceOf(StringSchema.class))
@@ -187,30 +196,30 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void neverMatchingAnyOf() {
+    public void neverMatchingAnyOf() throws Exception {
         assertTrue(SchemaLoader.load(get("anyOfNeverMatches")) instanceof CombinedSchema);
     }
 
     @Test
-    public void noExplicitObject() {
+    public void noExplicitObject() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("noExplicitObject"));
         Assert.assertFalse(actual.requiresObject());
     }
 
     @Test
-    public void notSchema() {
+    public void notSchema() throws Exception {
         NotSchema actual = (NotSchema) SchemaLoader.load(get("notSchema"));
         Assert.assertNotNull(actual);
     }
 
     @Test
-    public void nullSchema() {
+    public void nullSchema() throws Exception {
         NullSchema actual = (NullSchema) SchemaLoader.load(get("nullSchema"));
         Assert.assertNotNull(actual);
     }
 
     @Test
-    public void pointerResolution() {
+    public void pointerResolution() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("pointerResolution"));
         ObjectSchema rectangleSchema = (ObjectSchema) ((ReferenceSchema) actual.getPropertySchemas()
                 .get("rectangle"))
@@ -221,17 +230,17 @@ public class SchemaLoaderTest {
     }
 
     @Test(expected = SchemaException.class)
-    public void pointerResolutionFailure() {
+    public void pointerResolutionFailure() throws Exception {
         SchemaLoader.load(get("pointerResolutionFailure"));
     }
 
     @Test(expected = SchemaException.class)
-    public void pointerResolutionQueryFailure() {
+    public void pointerResolutionQueryFailure() throws Exception {
         SchemaLoader.load(get("pointerResolutionQueryFailure"));
     }
 
     @Test
-    public void propsAroundRefExtendTheReferredSchema() {
+    public void propsAroundRefExtendTheReferredSchema() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader
                 .load(get("propsAroundRefExtendTheReferredSchema"));
         ObjectSchema prop = (ObjectSchema) ((ReferenceSchema) actual.getPropertySchemas().get("prop"))
@@ -241,12 +250,12 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void recursiveSchema() {
+    public void recursiveSchema() throws Exception {
         SchemaLoader.load(get("recursiveSchema"));
     }
 
     @Test
-    public void refWithType() {
+    public void refWithType() throws Exception {
         ObjectSchema actualRoot = (ObjectSchema) SchemaLoader.load(get("refWithType"));
         ReferenceSchema actual = (ReferenceSchema) actualRoot.getPropertySchemas().get("prop");
         ObjectSchema propSchema = (ObjectSchema) actual.getReferredSchema();
@@ -254,7 +263,7 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void remotePointerResulion() {
+    public void remotePointerResulion() throws Exception {
         SchemaClient httpClient = Mockito.mock(SchemaClient.class);
         Mockito.when(httpClient.get("http://example.org/asd")).thenReturn(asStream("{}"));
         Mockito.when(httpClient.get("http://example.org/otherschema.json")).thenReturn(asStream("{}"));
@@ -264,7 +273,7 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void resolutionScopeTest() {
+    public void resolutionScopeTest() throws Exception {
         SchemaLoader.load(get("resolutionScopeTest"), new SchemaClient() {
 
             @Override
@@ -276,12 +285,12 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void selfRecursiveSchema() {
+    public void selfRecursiveSchema() throws Exception {
         SchemaLoader.load(get("selfRecursiveSchema"));
     }
 
     @Test
-    public void sniffByFormat() {
+    public void sniffByFormat() throws Exception {
         JSONObject schema = new JSONObject();
         schema.put("format", "hostname");
         Schema actual = SchemaLoader.builder().schemaJson(schema).build().load().build();
@@ -289,20 +298,20 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void stringSchema() {
+    public void stringSchema() throws Exception {
         StringSchema actual = (StringSchema) SchemaLoader.load(get("stringSchema"));
         assertEquals(2, actual.getMinLength().intValue());
         assertEquals(3, actual.getMaxLength().intValue());
     }
 
     @Test
-    public void stringSchemaWithFormat() {
+    public void stringSchemaWithFormat() throws Exception {
         StringSchema subject = (StringSchema) SchemaLoader.load(get("stringSchemaWithFormat"));
         TestSupport.expectFailure(subject, "asd");
     }
 
     @Test
-    public void tupleSchema() {
+    public void tupleSchema() throws Exception {
         ArraySchema actual = (ArraySchema) SchemaLoader.load(get("tupleSchema"));
         Assert.assertFalse(actual.permitsAdditionalItems());
         Assert.assertNull(actual.getAllItemSchema());
@@ -312,12 +321,12 @@ public class SchemaLoaderTest {
     }
 
     @Test(expected = SchemaException.class)
-    public void unknownSchema() {
+    public void unknownSchema() throws Exception {
         SchemaLoader.load(get("unknown"));
     }
 
     @Test
-    public void unsupportedFormat() {
+    public void unsupportedFormat() throws Exception {
         JSONObject schema = new JSONObject();
         schema.put("type", "string");
         schema.put("format", "unknown");
@@ -325,7 +334,7 @@ public class SchemaLoaderTest {
     }
 
     @Test
-    public void schemaJsonIdIsRecognized() {
+    public void schemaJsonIdIsRecognized() throws Exception {
         SchemaClient client = Mockito.mock(SchemaClient.class);
         ByteArrayInputStream retval = new ByteArrayInputStream("{}".getBytes());
         Mockito.when(client.get("http://example.org/schema/schema.json")).thenReturn(retval);

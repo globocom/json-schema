@@ -5,6 +5,7 @@ import org.everit.json.schema.ReferenceSchema;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.internal.JSONPointer;
 import org.everit.json.schema.loader.internal.ReferenceResolver;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -23,7 +24,7 @@ class ReferenceLookup {
      * returned object may be referentially the same as one of the parameters (in case the other
      * parameter is an empty object).
      */
-    static JSONObject extend(final JSONObject additional, final JSONObject original) {
+    static JSONObject extend(final JSONObject additional, final JSONObject original) throws JSONException {
         String[] additionalNames = JSONObjectUtils.getNames(additional);
         if (additionalNames == null) {
             return original;
@@ -73,7 +74,7 @@ class ReferenceLookup {
      * Rerurns a shallow copy of the {@code original} object, but it does not copy the {@code $ref}
      * key, in case it is present in {@code original}.
      */
-    JSONObject withoutRef(JSONObject original) {
+    JSONObject withoutRef(JSONObject original) throws JSONException {
         String[] names = JSONObjectUtils.getNames(original);
         if (names == null) {
             return original;
@@ -90,7 +91,7 @@ class ReferenceLookup {
     /**
      * Returns a schema builder instance after looking up the JSON pointer.
      */
-    Schema.Builder<?> lookup(String relPointerString, JSONObject ctx) {
+    Schema.Builder<?> lookup(String relPointerString, JSONObject ctx) throws JSONException {
         String absPointerString = ReferenceResolver.resolve(ls.id, relPointerString).toString();
         if (ls.pointerSchemas.containsKey(absPointerString)) {
             return ls.pointerSchemas.get(absPointerString);

@@ -175,8 +175,7 @@ public class JSONPointer {
         }
     }
 
-    private JSONObject queryFrom(final JSONObject document) {
-        JSONObject result; // temporary workaround
+    private JSONObject queryFrom(final JSONObject document) throws JSONException {
         if ("#".equals(fragment)) {
             result = document;
         } else {

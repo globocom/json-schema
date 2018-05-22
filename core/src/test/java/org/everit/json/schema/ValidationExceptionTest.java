@@ -187,7 +187,7 @@ public class ValidationExceptionTest {
     }
 
     @Test
-    public void testToJSON() {
+    public void testToJSON() throws Exception {
         ValidationException subject =
                 new ValidationException(BooleanSchema.INSTANCE, new StringBuilder("#/a/b"),
                         "exception message", Collections.<ValidationException>emptyList(), "type");
@@ -197,7 +197,7 @@ public class ValidationExceptionTest {
     }
 
     @Test
-    public void toJSONNullPointerToViolation() {
+    public void toJSONNullPointerToViolation() throws Exception {
         ValidationException subject =
                 new ValidationException(BooleanSchema.INSTANCE, null,
                         "exception message", Collections.<ValidationException>emptyList(), "type");
@@ -206,7 +206,7 @@ public class ValidationExceptionTest {
     }
 
     @Test
-    public void toJSONWithCauses() {
+    public void toJSONWithCauses() throws Exception {
         ValidationException cause =
                 new ValidationException(NullSchema.INSTANCE,
                         new StringBuilder("#/a/0"),

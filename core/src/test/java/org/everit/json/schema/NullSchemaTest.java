@@ -33,7 +33,7 @@ public class NullSchemaTest {
     }
 
     @Test
-    public void success() {
+    public void success() throws Exception {
         JSONObject obj = new JSONObject("{\"a\" : null}");
         NullSchema.INSTANCE.validate(obj.get("a"));
     }

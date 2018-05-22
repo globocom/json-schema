@@ -5,10 +5,12 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+
 import org.everit.json.schema.CombinedSchema;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.SchemaException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collection;
@@ -63,7 +65,7 @@ class CombinedSchemaLoader {
         this.defaultLoader = requireNonNull(defaultLoader, "defaultLoader cannot be null");
     }
 
-    public Optional<? extends Schema.Builder<?>> load() {
+    public Optional<? extends Schema.Builder<?>> load() throws JSONException {
         List<String> presentKeys = FluentIterable.from(COMB_SCHEMA_PROVIDERS.keySet())
                 .filter(new Predicate<String>() {
                     @Override

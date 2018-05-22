@@ -1,6 +1,7 @@
 package org.everit.json.schema.loader;
 
 import org.everit.json.schema.*;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,14 +15,22 @@ import static org.junit.Assert.assertEquals;
  */
 public class ObjectSchemaLoaderTest {
 
-    private static JSONObject ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("objecttestschemas.json");
+    private static JSONObject ALL_SCHEMAS;
 
-    private static JSONObject get(final String schemaName) {
+    static {
+        try {
+            ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("objecttestschemas.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static JSONObject get(final String schemaName) throws JSONException {
         return ALL_SCHEMAS.getJSONObject(schemaName);
     }
 
     @Test
-    public void objectSchema() {
+    public void objectSchema() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectSchema"));
         Assert.assertNotNull(actual);
         Map<String, Schema> propertySchemas = actual.getPropertySchemas();
@@ -34,37 +43,37 @@ public class ObjectSchemaLoaderTest {
     }
 
     @Test(expected = SchemaException.class)
-    public void objectInvalidAdditionalProperties() {
+    public void objectInvalidAdditionalProperties() throws Exception {
         SchemaLoader.load(get("objectInvalidAdditionalProperties"));
     }
 
     @Test
-    public void objectWithAdditionalPropSchema() {
+    public void objectWithAdditionalPropSchema() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectWithAdditionalPropSchema"));
         assertEquals(BooleanSchema.INSTANCE, actual.getSchemaOfAdditionalProperties());
     }
 
     @Test
-    public void objectWithPropDep() {
+    public void objectWithPropDep() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectWithPropDep"));
         assertEquals(1, actual.getPropertyDependencies().get("isIndividual").size());
     }
 
     @Test
-    public void objectWithSchemaDep() {
+    public void objectWithSchemaDep() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectWithSchemaDep"));
         assertEquals(1, actual.getSchemaDependencies().size());
     }
 
     @Test
-    public void patternProperties() {
+    public void patternProperties() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("patternProperties"));
         Assert.assertNotNull(actual);
         assertEquals(2, actual.getPatternProperties().size());
     }
 
     @Test(expected = SchemaException.class)
-    public void invalidDependency() {
+    public void invalidDependency() throws Exception {
         SchemaLoader.load(get("invalidDependency"));
     }
 

@@ -15,11 +15,11 @@
  */
 package org.everit.json.schema;
 
-import com.google.common.collect.Sets;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.everit.json.schema.internal.JSONPrinter;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class EnumSchemaTest {
     }
 
     @Test
-    public void failure() {
+    public void failure() throws Exception {
         TestSupport.failureOf(subject())
                 .expectedPointer("#")
                 .expectedKeyword("enum")
@@ -56,7 +56,7 @@ public class EnumSchemaTest {
     }
 
     @Test
-    public void success() {
+    public void success() throws Exception {
         possibleValues.add(new JSONArray());
         possibleValues.add(new JSONObject("{\"a\" : 0}"));
         EnumSchema subject = subject();
@@ -66,12 +66,16 @@ public class EnumSchemaTest {
         subject.validate(new JSONObject("{\"a\" : 0}"));
     }
 
-    private Set<Object> asSet(final JSONArray array) {
-        return Sets.newHashSet(array.iterator());
+    private Set<Object> asSet(final JSONArray array) throws JSONException {
+        return new HashSet<Object>() {{
+            for (int i = 0; i < array.length(); i++) {
+                add(array.get(i));
+            }
+        }};
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         StringWriter buffer = new StringWriter();
         subject().describeTo(new JSONPrinter(buffer));
         JSONObject actual = new JSONObject(buffer.getBuffer().toString());

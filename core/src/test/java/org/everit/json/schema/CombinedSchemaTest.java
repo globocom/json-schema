@@ -122,7 +122,7 @@ public class CombinedSchemaTest {
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         CombinedSchema subject = CombinedSchema
                 .allOf(asList(BooleanSchema.INSTANCE, NullSchema.INSTANCE))
                 .build();

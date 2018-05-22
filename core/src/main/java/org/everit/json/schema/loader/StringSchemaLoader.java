@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import org.everit.json.schema.Consumer;
 import org.everit.json.schema.FormatValidator;
 import org.everit.json.schema.StringSchema;
+import org.json.JSONException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,7 +19,7 @@ public class StringSchemaLoader {
         this.ls = requireNonNull(ls, "ls cannot be null");
     }
 
-    public StringSchema.Builder load() {
+    public StringSchema.Builder load() throws JSONException {
         final StringSchema.Builder builder = StringSchema.builder();
         ls.ifPresent("minLength", Integer.class, new Consumer<Integer>() {
             @Override

@@ -163,7 +163,7 @@ public class SchemaLoader {
      * @param schemaJson the JSON representation of the schema.
      * @return the schema validator object
      */
-    public static Schema load(final JSONObject schemaJson) {
+    public static Schema load(final JSONObject schemaJson) throws JSONException {
         return SchemaLoader.load(schemaJson, new DefaultSchemaClient());
     }
 
@@ -174,7 +174,7 @@ public class SchemaLoader {
      * @param httpClient the HTTP client to be used for resolving remote JSON references.
      * @return the created schema
      */
-    public static Schema load(final JSONObject schemaJson, final SchemaClient httpClient) {
+    public static Schema load(final JSONObject schemaJson, final SchemaClient httpClient) throws JSONException {
         SchemaLoader loader = builder()
                 .schemaJson(schemaJson)
                 .httpClient(httpClient)
@@ -225,7 +225,7 @@ public class SchemaLoader {
                 .pointerSchemas(pointerSchemas));
     }
 
-    private CombinedSchema.Builder buildAnyOfSchemaForMultipleTypes() {
+    private CombinedSchema.Builder buildAnyOfSchemaForMultipleTypes() throws JSONException {
         JSONArray subtypeJsons = ls.schemaJson.getJSONArray("type");
         Collection<Schema> subschemas = new ArrayList<>(subtypeJsons.length());
         for (int i = 0; i < subtypeJsons.length(); ++i) {
@@ -236,18 +236,22 @@ public class SchemaLoader {
         return CombinedSchema.anyOf(subschemas);
     }
 
-    private EnumSchema.Builder buildEnumSchema() {
-        JSONArray arr = ls.schemaJson.getJSONArray("enum");
-        Set<Object> possibleValues = Sets.newHashSet(arr.iterator());
+    private EnumSchema.Builder buildEnumSchema() throws JSONException {
+        Set<Object> possibleValues = new HashSet<Object>() {{
+            JSONArray arr = ls.schemaJson.getJSONArray("enum");
+            for (int i = 0; i < arr.length(); i++) {
+                add(arr.get(i));
+            }
+        }};
         return EnumSchema.builder().possibleValues(possibleValues);
     }
 
-    private NotSchema.Builder buildNotSchema() {
+    private NotSchema.Builder buildNotSchema() throws JSONException {
         Schema mustNotMatch = loadChild(ls.schemaJson.getJSONObject("not")).build();
         return NotSchema.builder().mustNotMatch(mustNotMatch);
     }
 
-    private Schema.Builder<?> buildSchemaWithoutExplicitType() {
+    private Schema.Builder<?> buildSchemaWithoutExplicitType() throws JSONException {
         if (ls.schemaJson.length() == 0) {
             return EmptySchema.builder();
         }
@@ -264,7 +268,7 @@ public class SchemaLoader {
         return EmptySchema.builder();
     }
 
-    private NumberSchema.Builder buildNumberSchema() {
+    private NumberSchema.Builder buildNumberSchema() throws JSONException {
         final NumberSchema.Builder builder = NumberSchema.builder();
         ls.ifPresent("minimum", Number.class, new Consumer<Number>() {
             @Override
@@ -306,7 +310,7 @@ public class SchemaLoader {
      * {@link Schema.Builder#build()} can be immediately used to acquire the {@link Schema}
      * instance to be used for validation
      */
-    public Schema.Builder<?> load() {
+    public Schema.Builder<?> load() throws JSONException {
         final Schema.Builder<?> builder;
         if (ls.schemaJson.has("enum")) {
             builder = buildEnumSchema();
@@ -315,10 +319,15 @@ public class SchemaLoader {
                     .or(new Supplier() {
                         @Override
                         public Object get() {
-                            if (!ls.schemaJson.has("type") || ls.schemaJson.has("$ref")) {
-                                return buildSchemaWithoutExplicitType();
-                            } else {
-                                return loadForType(ls.schemaJson.get("type"));
+                            try {
+                                if (!ls.schemaJson.has("type") || ls.schemaJson.has("$ref")) {
+                                    return buildSchemaWithoutExplicitType();
+                                } else {
+                                    return loadForType(ls.schemaJson.get("type"));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                return null;
                             }
                         }
                     });
@@ -344,7 +353,7 @@ public class SchemaLoader {
         return builder;
     }
 
-    private Schema.Builder<?> loadForExplicitType(final String typeString) {
+    private Schema.Builder<?> loadForExplicitType(final String typeString) throws JSONException {
         switch (typeString) {
             case "string":
                 return new StringSchemaLoader(ls).load();
@@ -365,15 +374,15 @@ public class SchemaLoader {
         }
     }
 
-    private ObjectSchema.Builder buildObjectSchema() {
+    private ObjectSchema.Builder buildObjectSchema() throws JSONException {
         return new ObjectSchemaLoader(ls, this).load();
     }
 
-    private ArraySchema.Builder buildArraySchema() {
+    private ArraySchema.Builder buildArraySchema() throws JSONException {
         return new ArraySchemaLoader(ls, this).load();
     }
 
-    Schema.Builder<?> loadForType(Object type) {
+    Schema.Builder<?> loadForType(Object type) throws JSONException {
         if (type instanceof JSONArray) {
             return buildAnyOfSchemaForMultipleTypes();
         } else if (type instanceof String) {
@@ -393,11 +402,11 @@ public class SchemaLoader {
                 }).isPresent();
     }
 
-    Schema.Builder<?> loadChild(final JSONObject childJson) {
+    Schema.Builder<?> loadChild(final JSONObject childJson) throws JSONException {
         return ls.initChildLoader().schemaJson(childJson).build().load();
     }
 
-    Schema.Builder<?> sniffSchemaByProps() {
+    Schema.Builder<?> sniffSchemaByProps() throws JSONException {
         if (schemaHasAnyOf(ARRAY_SCHEMA_PROPS)) {
             return buildArraySchema().requiresArray(false);
         } else if (schemaHasAnyOf(OBJECT_SCHEMA_PROPS)) {

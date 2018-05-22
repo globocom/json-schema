@@ -3,20 +3,29 @@ package org.everit.json.schema.loader;
 import org.everit.json.schema.ObjectSchema;
 import org.everit.json.schema.ResourceLoader;
 import org.everit.json.schema.Schema;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DefinesPropertyTest {
 
-    private static JSONObject ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("testschemas.json");
+    private static JSONObject ALL_SCHEMAS;
 
-    private JSONObject get(final String schemaName) {
+    static {
+        try {
+            ALL_SCHEMAS = ResourceLoader.DEFAULT.readObj("testschemas.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private JSONObject get(final String schemaName) throws JSONException {
         return ALL_SCHEMAS.getJSONObject(schemaName);
     }
 
     @Test
-    public void objectSchemaHasField() {
+    public void objectSchemaHasField() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("pointerResolution"));
         Assert.assertTrue(actual.definesProperty("#/rectangle"));
         Assert.assertTrue(actual.definesProperty("#/rectangle/a"));
@@ -31,7 +40,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void recursiveSchemaHasField() {
+    public void recursiveSchemaHasField() throws Exception {
         Schema recursiveSchema = SchemaLoader.load(get("recursiveSchema"));
 
         Assert.assertTrue(recursiveSchema.definesProperty("#/prop"));
@@ -41,7 +50,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void patternPropertiesHasField() {
+    public void patternPropertiesHasField() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("patternProperties"));
         Assert.assertTrue(actual.definesProperty("#/a"));
         Assert.assertTrue(actual.definesProperty("#/aa"));
@@ -53,7 +62,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void objectWithSchemaDep() {
+    public void objectWithSchemaDep() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectWithSchemaDep"));
         Assert.assertTrue(actual.definesProperty("#/a"));
         Assert.assertTrue(actual.definesProperty("#/b"));
@@ -62,7 +71,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void objectWithSchemaRectangleDep() {
+    public void objectWithSchemaRectangleDep() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectWithSchemaRectangleDep"));
         Assert.assertTrue(actual.definesProperty("#/d"));
         Assert.assertTrue(actual.definesProperty("#/rectangle/a"));
@@ -74,7 +83,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void objectEscape() {
+    public void objectEscape() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("objectEscape"));
         Assert.assertTrue(actual.definesProperty("#/a~0b"));
         Assert.assertTrue(actual.definesProperty("#/a~0b/c~1d"));
@@ -83,7 +92,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void testOfTest() {
+    public void testOfTest() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("patternPropsAndSchemaDeps"));
         JSONObject input = ResourceLoader.DEFAULT
                 .readObj("objecttestcases.json")
@@ -92,7 +101,7 @@ public class DefinesPropertyTest {
     }
 
     @Test
-    public void patternPropsAndSchemaDefs() {
+    public void patternPropsAndSchemaDefs() throws Exception {
         ObjectSchema actual = (ObjectSchema) SchemaLoader.load(get("patternPropsAndSchemaDeps"));
         // Assert.assertTrue(actual.definesProperty("#/1stLevel"));
         // Assert.assertTrue(actual.definesProperty("#/1stLevel/2ndLevel"));

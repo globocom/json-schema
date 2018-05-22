@@ -7,6 +7,7 @@ import org.everit.json.schema.ReferenceSchema;
 import org.everit.json.schema.SchemaException;
 import org.everit.json.schema.loader.internal.ResolutionScopeChangeListener;
 import org.everit.json.schema.loader.internal.TypeBasedMultiplexer;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONPointer;
 
@@ -49,7 +50,7 @@ class LoadingState {
     }
 
     <E> void ifPresent(final String key, final Class<E> expectedType,
-            final Consumer<E> consumer) {
+                       final Consumer<E> consumer) throws JSONException {
         if (schemaJson.has(key)) {
             @SuppressWarnings("unchecked")
             E value = (E) schemaJson.get(key);

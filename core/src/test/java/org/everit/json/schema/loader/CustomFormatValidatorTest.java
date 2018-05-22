@@ -16,9 +16,11 @@
 package org.everit.json.schema.loader;
 
 import com.google.common.base.Optional;
+
 import org.everit.json.schema.AbstractFormatValidator;
 import org.everit.json.schema.ResourceLoader;
 import org.everit.json.schema.ValidationException;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,7 +49,7 @@ public class CustomFormatValidatorTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws Exception {
         SchemaLoader schemaLoader = SchemaLoader.builder()
                 .schemaJson(baseSchemaJson())
                 .addFormatValidator("evenlength", new EvenCharNumValidator())
@@ -60,29 +62,32 @@ public class CustomFormatValidatorTest {
     }
 
     @Test
-    public void nameOverride() {
+    public void nameOverride() throws Exception {
         JSONObject rawSchemaJson = baseSchemaJson();
-        JSONObject idPropSchema = (JSONObject) rawSchemaJson.query("/properties/id");
+
+        JSONObject idPropSchema = rawSchemaJson.getJSONObject("properties").getJSONObject("id");
         idPropSchema.put("format", "somethingelse");
+
         SchemaLoader schemaLoader = SchemaLoader.builder()
                 .schemaJson(rawSchemaJson)
                 .addFormatValidator("somethingelse", new EvenCharNumValidator())
                 .build();
+
         Object actual = fetchFormatValueFromOutputJson(schemaLoader);
         assertEquals("somethingelse", actual);
     }
 
-    private Object fetchFormatValueFromOutputJson(SchemaLoader schemaLoader) {
+    private Object fetchFormatValueFromOutputJson(SchemaLoader schemaLoader) throws JSONException {
         return new JSONObject(schemaLoader.load().build().toString())
-                .query("/properties/id/format");
+                .getJSONObject("properties").getJSONObject("id").get("format");
     }
 
-    private JSONObject baseSchemaJson() {
+    private JSONObject baseSchemaJson() throws Exception {
         return loader.readObj("customformat-schema.json");
     }
 
     @Test
-    public void formatValidatorWithoutExplicitName() {
+    public void formatValidatorWithoutExplicitName() throws Exception {
         SchemaLoader schemaLoader = SchemaLoader.builder()
                 .schemaJson(baseSchemaJson())
                 .addFormatValidator(new EvenCharNumValidator())

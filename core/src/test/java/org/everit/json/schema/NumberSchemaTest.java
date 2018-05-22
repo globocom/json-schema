@@ -127,14 +127,14 @@ public class NumberSchemaTest {
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("numberschema.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         assertTrue(ObjectComparator.deepEquals(rawSchemaJson, new JSONObject(actual)));
     }
 
     @Test
-    public void toStringNoExplicitType() {
+    public void toStringNoExplicitType() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("numberschema.json");
         rawSchemaJson.remove("type");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
@@ -142,7 +142,7 @@ public class NumberSchemaTest {
     }
 
     @Test
-    public void toStringReqInteger() {
+    public void toStringReqInteger() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("numberschema.json");
         rawSchemaJson.put("type", "integer");
         String actual = SchemaLoader.load(rawSchemaJson).toString();

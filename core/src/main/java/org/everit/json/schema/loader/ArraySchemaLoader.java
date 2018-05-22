@@ -3,6 +3,7 @@ package org.everit.json.schema.loader;
 import org.everit.json.schema.ArraySchema;
 import org.everit.json.schema.Consumer;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import static java.util.Objects.requireNonNull;
@@ -21,7 +22,7 @@ class ArraySchemaLoader {
         this.defaultLoader = requireNonNull(defaultLoader, "defaultLoader cannot be null");
     }
 
-    ArraySchema.Builder load() {
+    ArraySchema.Builder load() throws JSONException {
         final ArraySchema.Builder builder = ArraySchema.builder();
         ls.ifPresent("minItems", Integer.class, new Consumer<Integer>() {
             @Override
@@ -53,7 +54,7 @@ class ArraySchemaLoader {
                     .ifObject()
                     .then(new Consumer<JSONObject>() {
                         @Override
-                        public void accept(JSONObject jsonObj) {
+                        public void accept(JSONObject jsonObj) throws JSONException {
                             builder.schemaOfAdditionalItems(defaultLoader.loadChild(jsonObj).build());
                         }
                     })
@@ -64,14 +65,14 @@ class ArraySchemaLoader {
                     .ifObject()
                     .then(new Consumer<JSONObject>() {
                         @Override
-                        public void accept(JSONObject itemSchema) {
+                        public void accept(JSONObject itemSchema) throws JSONException {
                             builder.allItemSchema(defaultLoader.loadChild(itemSchema).build());
                         }
                     })
                     .ifIs(JSONArray.class)
                     .then(new Consumer<JSONArray>() {
                         @Override
-                        public void accept(JSONArray arr) {
+                        public void accept(JSONArray arr) throws JSONException {
                             buildTupleSchema(builder, arr);
                         }
                     })
@@ -80,13 +81,13 @@ class ArraySchemaLoader {
         return builder;
     }
 
-    private void buildTupleSchema(final ArraySchema.Builder builder, final JSONArray itemSchema) {
+    private void buildTupleSchema(final ArraySchema.Builder builder, final JSONArray itemSchema) throws JSONException {
         for (int i = 0; i < itemSchema.length(); ++i) {
             ls.typeMultiplexer(itemSchema.get(i))
                     .ifObject()
                     .then(new Consumer<JSONObject>() {
                         @Override
-                        public void accept(JSONObject schema) {
+                        public void accept(JSONObject schema) throws JSONException {
                             builder.addItemSchema(defaultLoader.loadChild(schema).build());
                         }
                     })

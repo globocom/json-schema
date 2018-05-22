@@ -21,8 +21,10 @@ import com.google.common.collect.FluentIterable;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -32,19 +34,23 @@ import static org.junit.Assert.assertTrue;
 
 public class ObjectSchemaTest {
 
-    private static final JSONObject OBJECTS = ResourceLoader.DEFAULT.readObj("objecttestcases.json");
-
+    private JSONObject OBJECTS;
     private ResourceLoader loader = ResourceLoader.DEFAULT;
 
+    @Before
+    public void setup() throws JSONException {
+        OBJECTS = loader.readObj("objecttestcases.json");
+    }
+
     @Test
-    public void additionalPropertiesOnEmptyObject() {
+    public void additionalPropertiesOnEmptyObject() throws Exception {
         ObjectSchema.builder()
                 .schemaOfAdditionalProperties(BooleanSchema.INSTANCE).build()
                 .validate(OBJECTS.getJSONObject("emptyObject"));
     }
 
     @Test
-    public void additionalPropertySchema() {
+    public void additionalPropertySchema() throws Exception {
         ObjectSchema subject = ObjectSchema.builder()
                 .schemaOfAdditionalProperties(BooleanSchema.INSTANCE)
                 .build();
@@ -56,7 +62,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void maxPropertiesFailure() {
+    public void maxPropertiesFailure() throws Exception {
         ObjectSchema subject = ObjectSchema.builder().maxProperties(2).build();
         TestSupport.failureOf(subject)
                 .input(OBJECTS.get("maxPropertiesFailure"))
@@ -66,7 +72,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void minPropertiesFailure() {
+    public void minPropertiesFailure() throws Exception {
         ObjectSchema subject = ObjectSchema.builder().minProperties(2).build();
         TestSupport.failureOf(subject)
                 .input(OBJECTS.get("minPropertiesFailure"))
@@ -76,7 +82,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void multipleAdditionalProperties() {
+    public void multipleAdditionalProperties() throws Exception {
         ObjectSchema subject = ObjectSchema.builder().additionalProperties(false).build();
         try {
             subject.validate(new JSONObject("{\"a\":true,\"b\":true}"));
@@ -88,7 +94,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void multipleSchemaDepViolation() {
+    public void multipleSchemaDepViolation() throws Exception {
         Schema billingAddressSchema = new StringSchema();
         Schema billingNameSchema = StringSchema.builder().minLength(4).build();
         ObjectSchema subject = ObjectSchema.builder()
@@ -128,7 +134,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void multipleViolations() {
+    public void multipleViolations() throws Exception {
         Schema subject = ObjectSchema.builder()
                 .addPropertySchema("numberProp", new NumberSchema())
                 .patternProperty("^string.*", new StringSchema())
@@ -228,13 +234,13 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void noAdditionalProperties() {
+    public void noAdditionalProperties() throws Exception {
         ObjectSchema subject = ObjectSchema.builder().additionalProperties(false).build();
         TestSupport.expectFailure(subject, "#", OBJECTS.get("propertySchemaViolation"));
     }
 
     @Test
-    public void noProperties() {
+    public void noProperties() throws Exception {
         ObjectSchema.builder().build().validate(OBJECTS.get("noProperties"));
     }
 
@@ -251,7 +257,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void patternPropertyOverridesAdditionalPropSchema() {
+    public void patternPropertyOverridesAdditionalPropSchema() throws Exception {
         ObjectSchema.builder()
                 .schemaOfAdditionalProperties(new NumberSchema())
                 .patternProperty("aa.*", BooleanSchema.INSTANCE)
@@ -259,7 +265,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void patternPropertyViolation() {
+    public void patternPropertyViolation() throws Exception {
         ObjectSchema subject = ObjectSchema.builder()
                 .patternProperty("^b_.*", BooleanSchema.INSTANCE)
                 .patternProperty("^s_.*", new StringSchema())
@@ -269,7 +275,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void patternPropsOverrideAdditionalProps() {
+    public void patternPropsOverrideAdditionalProps() throws Exception {
         ObjectSchema.builder()
                 .patternProperty("^v.*", EmptySchema.INSTANCE)
                 .additionalProperties(false)
@@ -277,7 +283,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void propertyDepViolation() {
+    public void propertyDepViolation() throws Exception {
         ObjectSchema subject = ObjectSchema.builder()
                 .addPropertySchema("ifPresent", NullSchema.INSTANCE)
                 .addPropertySchema("mustBePresent", BooleanSchema.INSTANCE)
@@ -290,7 +296,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void propertySchemaViolation() {
+    public void propertySchemaViolation() throws Exception {
         ObjectSchema subject = ObjectSchema.builder()
                 .addPropertySchema("boolProp", BooleanSchema.INSTANCE).build();
         TestSupport.expectFailure(subject, BooleanSchema.INSTANCE, "#/boolProp",
@@ -298,7 +304,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void requiredProperties() {
+    public void requiredProperties() throws Exception {
         ObjectSchema subject = ObjectSchema.builder()
                 .addPropertySchema("boolProp", BooleanSchema.INSTANCE)
                 .addPropertySchema("nullProp", NullSchema.INSTANCE)
@@ -317,7 +323,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void schemaDepViolation() {
+    public void schemaDepViolation() throws Exception {
         Schema billingAddressSchema = new StringSchema();
         ObjectSchema subject = ObjectSchema.builder()
                 .addPropertySchema("name", new StringSchema())
@@ -369,14 +375,14 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/objectschema.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         assertTrue(ObjectComparator.deepEquals(rawSchemaJson, new JSONObject(actual)));
     }
 
     @Test
-    public void toStringNoExplicitType() {
+    public void toStringNoExplicitType() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/objectschema.json");
         rawSchemaJson.remove("type");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
@@ -384,7 +390,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void toStringNoAdditionalProperties() {
+    public void toStringNoAdditionalProperties() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/objectschema.json");
         rawSchemaJson.put("additionalProperties", false);
         String actual = SchemaLoader.load(rawSchemaJson).toString();
@@ -392,7 +398,7 @@ public class ObjectSchemaTest {
     }
 
     @Test
-    public void toStringSchemaDependencies() {
+    public void toStringSchemaDependencies() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/objectschema-schemadep.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         assertTrue(ObjectComparator.deepEquals(rawSchemaJson, new JSONObject(actual)));

@@ -22,6 +22,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -273,7 +274,7 @@ public class ObjectSchema extends Schema {
         return requiresObject;
     }
 
-    private ImmutableList<ValidationException> testAdditionalProperties(final JSONObject subject) {
+    private ImmutableList<ValidationException> testAdditionalProperties(final JSONObject subject) throws JSONException {
         if (!additionalProperties) {
             return getAdditionalProperties(subject)
                     .transform(new Function<String, ValidationException>() {
@@ -302,7 +303,7 @@ public class ObjectSchema extends Schema {
         return ImmutableList.of();
     }
 
-    private List<ValidationException> testPatternProperties(final JSONObject subject) {
+    private List<ValidationException> testPatternProperties(final JSONObject subject) throws JSONException {
         String[] propNames = JSONObjectUtils.getNames(subject);
         if (propNames == null || propNames.length == 0) {
             return Collections.emptyList();
@@ -325,7 +326,7 @@ public class ObjectSchema extends Schema {
         return rval;
     }
 
-    private List<ValidationException> testProperties(final JSONObject subject) {
+    private List<ValidationException> testProperties(final JSONObject subject) throws JSONException {
         if (propertySchemas != null) {
             List<ValidationException> rval = new ArrayList<>();
             for (Entry<String, Schema> entry : propertySchemas.entrySet()) {
@@ -429,13 +430,18 @@ public class ObjectSchema extends Schema {
         } else {
             List<ValidationException> failures = new ArrayList<>();
             JSONObject objSubject = (JSONObject) subject;
-            failures.addAll(testProperties(objSubject));
-            failures.addAll(testRequiredProperties(objSubject));
-            failures.addAll(testAdditionalProperties(objSubject));
-            failures.addAll(testSize(objSubject));
-            failures.addAll(testPropertyDependencies(objSubject));
-            failures.addAll(testSchemaDependencies(objSubject));
-            failures.addAll(testPatternProperties(objSubject));
+            try {
+                failures.addAll(testProperties(objSubject));
+                failures.addAll(testRequiredProperties(objSubject));
+                failures.addAll(testAdditionalProperties(objSubject));
+                failures.addAll(testSize(objSubject));
+                failures.addAll(testPropertyDependencies(objSubject));
+                failures.addAll(testSchemaDependencies(objSubject));
+                failures.addAll(testPatternProperties(objSubject));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                throw new ValidationException(this, JSONObject.class, subject);
+            }
             ValidationException.throwFor(this, failures);
         }
     }
@@ -541,7 +547,7 @@ public class ObjectSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         if (requiresObject) {
             writer.key("type").value("object");
         }
@@ -572,7 +578,7 @@ public class ObjectSchema extends Schema {
         writer.ifFalse("additionalProperties", additionalProperties);
     }
 
-    private void describePropertyDependenciesTo(JSONPrinter writer) {
+    private void describePropertyDependenciesTo(JSONPrinter writer) throws JSONException {
         writer.key("dependencies");
         writer.object();
         for (Entry<String, Set<String>> entry : propertyDependencies.entrySet()) {

@@ -16,7 +16,9 @@
 package org.everit.json.schema;
 
 import com.google.common.base.Function;
+
 import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -218,7 +220,7 @@ public class StringSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         if (requiresString) {
             writer.key("type").value("string");
         }

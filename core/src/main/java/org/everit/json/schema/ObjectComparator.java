@@ -16,6 +16,7 @@
 package org.everit.json.schema;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public final class ObjectComparator {
      * @param obj2 the second object to be inspected
      * @return {@code true} if the two objects are equal, {@code false} otherwise
      */
-    public static boolean deepEquals(final Object obj1, final Object obj2) {
+    public static boolean deepEquals(final Object obj1, final Object obj2) throws JSONException {
         if (obj1 instanceof JSONArray) {
             if (!(obj2 instanceof JSONArray)) {
                 return false;
@@ -48,7 +49,7 @@ public final class ObjectComparator {
         return Objects.equals(obj1, obj2);
     }
 
-    private static boolean deepEqualArrays(final JSONArray arr1, final JSONArray arr2) {
+    private static boolean deepEqualArrays(final JSONArray arr1, final JSONArray arr2) throws JSONException {
         if (arr1.length() != arr2.length()) {
             return false;
         }
@@ -69,7 +70,7 @@ public final class ObjectComparator {
         return raw;
     }
 
-    private static boolean deepEqualObjects(final JSONObject jsonObj1, final JSONObject jsonObj2) {
+    private static boolean deepEqualObjects(final JSONObject jsonObj1, final JSONObject jsonObj2) throws JSONException {
         String[] obj1Names = sortedNamesOf(jsonObj1);
         if (!Arrays.equals(obj1Names, sortedNamesOf(jsonObj2))) {
             return false;

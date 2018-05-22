@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -366,7 +367,7 @@ public class ValidationException extends RuntimeException {
      *
      * @return a JSON description of the validation error
      */
-    public JSONObject toJSON() {
+    public JSONObject toJSON() throws JSONException {
         JSONObject rval = new JSONObject();
         rval.put("keyword", keyword);
         if (pointerToViolation == null) {
@@ -379,7 +380,12 @@ public class ValidationException extends RuntimeException {
                 .transform(new Function<ValidationException, JSONObject>() {
                     @Override
                     public JSONObject apply(ValidationException input) {
-                        return input.toJSON();
+                        try {
+                            return input.toJSON();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            return new JSONObject();
+                        }
                     }
                 })
                 .toList();

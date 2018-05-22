@@ -18,8 +18,10 @@ package org.everit.json.schema.loader.internal;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+
 import org.everit.json.schema.Consumer;
 import org.everit.json.schema.SchemaException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -74,16 +76,25 @@ public class TypeBasedMultiplexer {
             Consumer<JSONObject> wrapperConsumer = new Consumer<JSONObject>() {
                 @Override
                 public void accept(JSONObject obj) {
-                    if (obj.has("id") && obj.get("id") instanceof String) {
-                        URI origId = id;
-                        String idAttr = obj.getString("id");
-                        id = ReferenceResolver.resolve(id, idAttr);
-                        triggerResolutionScopeChange();
-                        consumer.accept(obj);
-                        id = origId;
-                        triggerResolutionScopeChange();
-                    } else {
-                        consumer.accept(obj);
+                    try {
+                        if (obj.has("id") && obj.get("id") instanceof String) {
+                            URI origId = id;
+                            String idAttr = null;
+                            try {
+                                idAttr = obj.getString("id");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            id = ReferenceResolver.resolve(id, idAttr);
+                            triggerResolutionScopeChange();
+                            consumer.accept(obj);
+                            id = origId;
+                            triggerResolutionScopeChange();
+                        } else {
+                            consumer.accept(obj);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             };
@@ -231,7 +242,7 @@ public class TypeBasedMultiplexer {
      *
      * @param orElseConsumer the callback to be called if no types matched.
      */
-    public void orElse(final Consumer<Object> orElseConsumer) {
+    public void orElse(final Consumer<Object> orElseConsumer) throws JSONException {
         @SuppressWarnings("unchecked")
 
         Consumer<Object> consumer = FluentIterable.from(actions.keySet())
@@ -257,7 +268,7 @@ public class TypeBasedMultiplexer {
      * or {@link #ifObject()}), performs the mapped action of found or throws with a
      * {@link SchemaException}.
      */
-    public void requireAny() {
+    public void requireAny() throws JSONException {
         orElse(new Consumer<Object>() {
             @Override
             public void accept(Object obj) {

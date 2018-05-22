@@ -18,6 +18,7 @@ package org.everit.json.schema;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -28,10 +29,18 @@ public class ArraySchemaTest {
 
     private static final ResourceLoader loader = ResourceLoader.DEFAULT;
 
-    private static final JSONObject ARRAYS = loader.readObj("arraytestcases.json");
+    private static JSONObject ARRAYS;
+
+    static {
+        try {
+            ARRAYS = loader.readObj("arraytestcases.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
-    public void additionalItemsSchema() {
+    public void additionalItemsSchema() throws Exception {
         ArraySchema.builder()
                 .addItemSchema(BooleanSchema.INSTANCE)
                 .schemaOfAdditionalItems(NullSchema.INSTANCE)
@@ -39,7 +48,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void additionalItemsSchemaFailure() {
+    public void additionalItemsSchemaFailure() throws Exception {
         ArraySchema subject = ArraySchema.builder()
                 .addItemSchema(BooleanSchema.INSTANCE)
                 .schemaOfAdditionalItems(NullSchema.INSTANCE)
@@ -53,13 +62,13 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void booleanItems() {
+    public void booleanItems() throws Exception {
         ArraySchema subject = ArraySchema.builder().allItemSchema(BooleanSchema.INSTANCE).build();
         TestSupport.expectFailure(subject, BooleanSchema.INSTANCE, "#/2", ARRAYS.get("boolArrFailure"));
     }
 
     @Test
-    public void doesNotRequireExplicitArray() {
+    public void doesNotRequireExplicitArray() throws Exception {
         ArraySchema.builder()
                 .requiresArray(false)
                 .uniqueItems(true)
@@ -67,7 +76,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void maxItems() {
+    public void maxItems() throws Exception {
         ArraySchema subject = ArraySchema.builder().maxItems(0).build();
         TestSupport.failureOf(subject)
                 .subject(subject)
@@ -78,7 +87,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void minItems() {
+    public void minItems() throws Exception {
         ArraySchema subject = ArraySchema.builder().minItems(2).build();
         TestSupport.failureOf(subject)
                 .expectedPointer("#")
@@ -88,7 +97,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void noAdditionalItems() {
+    public void noAdditionalItems() throws Exception {
         ArraySchema subject = ArraySchema.builder()
                 .additionalItems(false)
                 .addItemSchema(BooleanSchema.INSTANCE)
@@ -98,12 +107,12 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void noItemSchema() {
+    public void noItemSchema() throws Exception {
         ArraySchema.builder().build().validate(ARRAYS.get("noItemSchema"));
     }
 
     @Test
-    public void nonUniqueArrayOfArrays() {
+    public void nonUniqueArrayOfArrays() throws Exception {
         ArraySchema subject = ArraySchema.builder().uniqueItems(true).build();
         TestSupport.failureOf(subject)
                 .expectedPointer("#")
@@ -119,7 +128,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void tupleWithOneItem() {
+    public void tupleWithOneItem() throws Exception {
         ArraySchema subject = ArraySchema.builder().addItemSchema(BooleanSchema.INSTANCE).build();
         TestSupport.failureOf(subject)
                 .expectedViolatedSchema(BooleanSchema.INSTANCE)
@@ -137,25 +146,25 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void uniqueItemsObjectViolation() {
+    public void uniqueItemsObjectViolation() throws Exception {
         ArraySchema subject = ArraySchema.builder().uniqueItems(true).build();
         TestSupport.expectFailure(subject, "#", ARRAYS.get("nonUniqueObjects"));
     }
 
     @Test
-    public void uniqueItemsViolation() {
+    public void uniqueItemsViolation() throws Exception {
         ArraySchema subject = ArraySchema.builder().uniqueItems(true).build();
         TestSupport.expectFailure(subject, "#", ARRAYS.get("nonUniqueItems"));
     }
 
     @Test
-    public void uniqueItemsWithSameToString() {
+    public void uniqueItemsWithSameToString() throws Exception {
         ArraySchema.builder().uniqueItems(true).build()
                 .validate(ARRAYS.get("uniqueItemsWithSameToString"));
     }
 
     @Test
-    public void uniqueObjectValues() {
+    public void uniqueObjectValues() throws Exception {
         ArraySchema.builder().uniqueItems(true).build()
                 .validate(ARRAYS.get("uniqueObjectValues"));
     }
@@ -169,14 +178,14 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void toStringTest() {
+    public void toStringTest() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/arrayschema-list.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         assertTrue(ObjectComparator.deepEquals(rawSchemaJson, new JSONObject(actual)));
     }
 
     @Test
-    public void toStringAdditionalItems() {
+    public void toStringAdditionalItems() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/arrayschema-list.json");
         rawSchemaJson.remove("items");
         rawSchemaJson.put("additionalItems", false);
@@ -185,7 +194,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void toStringNoExplicitType() {
+    public void toStringNoExplicitType() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/arrayschema-list.json");
         rawSchemaJson.remove("type");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
@@ -193,7 +202,7 @@ public class ArraySchemaTest {
     }
 
     @Test
-    public void toStringTupleSchema() {
+    public void toStringTupleSchema() throws Exception {
         JSONObject rawSchemaJson = loader.readObj("tostring/arrayschema-tuple.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         assertTrue(ObjectComparator.deepEquals(rawSchemaJson, new JSONObject(actual)));

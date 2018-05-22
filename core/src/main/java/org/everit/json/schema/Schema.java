@@ -17,6 +17,7 @@ package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
 import org.json.JSONWriter;
+import org.json.JSONException;
 
 import java.io.StringWriter;
 import java.util.Objects;
@@ -174,7 +175,7 @@ public abstract class Schema {
      *
      * @param writer it will receive the schema description
      */
-    public final void describeTo(final JSONPrinter writer) {
+    public final void describeTo(final JSONPrinter writer) throws JSONException {
         writer.object();
         writer.ifPresent("title", title);
         writer.ifPresent("description", description);
@@ -192,14 +193,18 @@ public abstract class Schema {
      *
      * @param writer it will receive the schema description
      */
-    void describePropertiesTo(final JSONPrinter writer) {
+    void describePropertiesTo(final JSONPrinter writer) throws JSONException {
 
     }
 
     @Override
     public String toString() {
         StringWriter w = new StringWriter();
-        describeTo(new JSONPrinter(w));
+        try {
+            describeTo(new JSONPrinter(w));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return w.getBuffer().toString();
     }
 

@@ -1,5 +1,6 @@
 package org.everit.json.schema;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -18,9 +19,11 @@ public class ResourceLoader {
         this.rootPath = requireNonNull(rootPath, "rootPath cannot be null");
     }
 
-    public JSONObject readObj(String relPath) {
+    public JSONObject readObj(String relPath) throws JSONException {
         InputStream stream = getStream(relPath);
-        return new JSONObject(new JSONTokener(stream));
+        String objContent = new BufferedReader(new InputStreamReader(stream))
+                .lines().collect(Collectors.joining("\n"));
+        return new JSONObject(new JSONTokener(objContent));
     }
 
     public InputStream getStream(String relPath) {

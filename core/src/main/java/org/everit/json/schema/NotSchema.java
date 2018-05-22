@@ -20,6 +20,7 @@ import org.everit.json.schema.internal.JSONPrinter;
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
+import org.json.JSONException;
 
 /**
  * {@code Not} schema validator.
@@ -96,7 +97,7 @@ public class NotSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         writer.key("not");
         mustNotMatch.describeTo(writer);
     }

@@ -21,6 +21,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -31,7 +32,7 @@ import java.net.URISyntaxException;
 public class TypeBasedMultiplexerTest {
 
     @Test
-    public void differentPortNum() {
+    public void differentPortNum() throws Exception {
         expectScopeChanges(objectWithId("otherschema.json"), "http://x.y.z:8080/otherschema.json",
                 "http://x.y.z:8080/rootschema.json");
     }
@@ -45,7 +46,7 @@ public class TypeBasedMultiplexerTest {
     }
 
     @Test
-    public void dispatchesIdChangeEvent() {
+    public void dispatchesIdChangeEvent() throws Exception {
         JSONObject scopeChangingObj = objectWithId("changedId");
         TypeBasedMultiplexer subject =
                 new TypeBasedMultiplexer(null, scopeChangingObj, uri("http://orig"));
@@ -57,8 +58,8 @@ public class TypeBasedMultiplexerTest {
         Mockito.verify(mockListener).resolutionScopeChanged(uri("http://orig"));
     }
 
-    private void expectScopeChanges(final JSONObject subjectOfMultiplexing, final String newScope,
-            final String origScope) {
+    private void expectScopeChanges(
+            final JSONObject subjectOfMultiplexing, final String newScope, final String origScope) throws JSONException {
         TypeBasedMultiplexer subject = new TypeBasedMultiplexer(null, subjectOfMultiplexing,
                 uri(origScope));
         ResolutionScopeChangeListener mockListener = Mockito.mock(ResolutionScopeChangeListener.class);
@@ -83,32 +84,32 @@ public class TypeBasedMultiplexerTest {
     }
 
     @Test
-    public void fragmentIdOccurence() {
+    public void fragmentIdOccurence() throws Exception {
         JSONObject objWithFragment = objectWithId("#foo");
         expectScopeChanges(objWithFragment, "http://x.y.z/rootschema.json#foo",
                 "http://x.y.z/rootschema.json");
     }
 
     @Test
-    public void newRoot() {
+    public void newRoot() throws Exception {
         expectScopeChanges(objectWithId("http://otherserver.com"), "http://otherserver.com",
                 "http://x.y.z:8080/rootschema.json");
     }
 
     @Test
-    public void nonFragmentRelativePath() {
+    public void nonFragmentRelativePath() throws Exception {
         expectScopeChanges(objectWithId("otherschema.json"), "http://x.y.z/otherschema.json",
                 "http://x.y.z/rootschema.json");
     }
 
-    private JSONObject objectWithId(final String idAttribute) {
+    private JSONObject objectWithId(final String idAttribute) throws JSONException {
         JSONObject scopeChangingObj = new JSONObject();
         scopeChangingObj.put("id", idAttribute);
         return scopeChangingObj;
     }
 
     @Test
-    public void relpathThenFragment() {
+    public void relpathThenFragment() throws Exception {
         JSONObject outerObj = objectWithId("otherschema.json");
         JSONObject innerObj = objectWithId("#bar");
         outerObj.put("innerObj", innerObj);
@@ -122,11 +123,15 @@ public class TypeBasedMultiplexerTest {
                 .then(new Consumer<JSONObject>() {
                     @Override
                     public void accept(JSONObject jsonObject) {
-                        TypeBasedMultiplexer innerMultiplexer =
-                                new TypeBasedMultiplexer(null, jsonObject.get("innerObj"),
-                                        uri("http://x.y.z/otherschema.json"));
-                        innerMultiplexer.addResolutionScopeChangeListener(innerListener);
-                        innerMultiplexer.ifObject().then(Consumer.EMPTY).requireAny();
+                        try {
+
+                            TypeBasedMultiplexer innerMultiplexer = new TypeBasedMultiplexer(null, jsonObject.get("innerObj"),
+                                    uri("http://x.y.z/otherschema.json"));
+                            innerMultiplexer.addResolutionScopeChangeListener(innerListener);
+                            innerMultiplexer.ifObject().then(Consumer.EMPTY).requireAny();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }).requireAny();
         Mockito.verify(outerListener).resolutionScopeChanged(uri("http://x.y.z/otherschema.json"));
@@ -136,13 +141,13 @@ public class TypeBasedMultiplexerTest {
     }
 
     @Test
-    public void relpathWithFragment() {
+    public void relpathWithFragment() throws Exception {
         expectScopeChanges(objectWithId("t/inner.json#a"), "http://x.y.z:8080/t/inner.json#a",
                 "http://x.y.z:8080/rootschema.json");
     }
 
     @Test(expected = SchemaException.class)
-    public void typeBasedMultiplexerFailure() {
+    public void typeBasedMultiplexerFailure() throws Exception {
         new TypeBasedMultiplexer("foo")
                 .ifObject().then(Consumer.EMPTY)
                 .ifIs(JSONArray.class).then(Consumer.EMPTY)
@@ -150,7 +155,7 @@ public class TypeBasedMultiplexerTest {
     }
 
     @Test
-    public void typeBasedMultiplexerTest() {
+    public void typeBasedMultiplexerTest() throws Exception {
         new TypeBasedMultiplexer(new JSONObject())
                 .ifObject().then(Consumer.EMPTY)
                 .ifIs(JSONArray.class).then(Consumer.EMPTY)

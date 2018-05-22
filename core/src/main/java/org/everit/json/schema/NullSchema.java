@@ -16,6 +16,7 @@
 package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -75,7 +76,7 @@ public class NullSchema extends Schema {
     }
 
     @Override
-    void describePropertiesTo(JSONPrinter writer) {
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
         writer.key("type");
         writer.value("null");
     }
