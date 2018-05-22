@@ -19,4 +19,11 @@ public class JSONObjectUtils {
 
         return names;
     }
+
+    public static <T> T requireNonNull(T obj, String msg) {
+        if (obj == null) {
+            throw new NullPointerException(msg);
+        }
+        return obj;
+    }
 }
