@@ -116,11 +116,11 @@ public class ArraySchema extends Schema {
         int actualLength = subject.length();
         if (minItems != null && actualLength < minItems) {
             return Optional.of(new ValidationException(this, "expected minimum item count: " + minItems
-                    + ", found: " + actualLength, "minItems"));
+                + ", found: " + actualLength, "minItems"));
         }
         if (maxItems != null && maxItems < actualLength) {
             return Optional.of(new ValidationException(this, "expected maximum item count: " + minItems
-                    + ", found: " + actualLength, "maxItems"));
+                + ", found: " + actualLength, "maxItems"));
         }
         return Optional.absent();
     }
@@ -132,8 +132,8 @@ public class ArraySchema extends Schema {
         } else if (itemSchemas != null) {
             if (!additionalItems && subject.length() > itemSchemas.size()) {
                 rval.add(new ValidationException(this, String.format(
-                        "expected: [%d] array items, found: [%d]",
-                        itemSchemas.size(), subject.length()), "items"));
+                    "expected: [%d] array items, found: [%d]",
+                    itemSchemas.size(), subject.length()), "items"));
             }
             int itemValidationUntil = Math.min(subject.length(), itemSchemas.size());
             validateItemsAgainstSchema(itemValidationUntil, subject, new Function<Integer, Schema>() {
@@ -150,13 +150,13 @@ public class ArraySchema extends Schema {
     }
 
     private void validateItemsAgainstSchema(final int endExclusive, final JSONArray items, final Schema schema,
-            final List<ValidationException> rval) {
+                                            final List<ValidationException> rval) throws JSONException {
         validateItemsAgainstSchema(0, endExclusive, items, schema, rval);
     }
 
     private void validateItemsAgainstSchema(final int startInclusive, final int endExclusive, final JSONArray items,
-            final Schema schema,
-            final List<ValidationException> rval) {
+                                            final Schema schema,
+                                            final List<ValidationException> rval) throws JSONException {
         validateItemsAgainstSchema(startInclusive, endExclusive, items, new Function<Integer, Schema>() {
             @Override
             public Schema apply(Integer input) {
@@ -166,21 +166,21 @@ public class ArraySchema extends Schema {
     }
 
     private void validateItemsAgainstSchema(final int endExclusive, final JSONArray items,
-            final Function<Integer, Schema> schemaForIndex, final List<ValidationException> rval) {
+                                            final Function<Integer, Schema> schemaForIndex, final List<ValidationException> rval) throws JSONException {
         validateItemsAgainstSchema(0, endExclusive, items, schemaForIndex, rval);
     }
 
     private void validateItemsAgainstSchema(final int startInclusive, final int endExclusive, final JSONArray items,
-            final Function<Integer, Schema> schemaForIndex, final List<ValidationException> rval) {
+                                            final Function<Integer, Schema> schemaForIndex, final List<ValidationException> rval) throws JSONException {
         for (int i = startInclusive; i < endExclusive; i++) {
             final String copyOfI = String.valueOf(i); // i is not effectively final so we copy it
             Optional<ValidationException> maybeException = ifFails(schemaForIndex.apply(i), items.get(i))
-                    .transform(new Function<ValidationException, ValidationException>() {
-                        @Override
-                        public ValidationException apply(ValidationException exc) {
-                            return exc.prepend(copyOfI);
-                        }
-                    });
+                .transform(new Function<ValidationException, ValidationException>() {
+                    @Override
+                    public ValidationException apply(ValidationException exc) {
+                        return exc.prepend(copyOfI);
+                    }
+                });
 
             if (maybeException.isPresent()) {
                 rval.add(maybeException.get());
@@ -198,7 +198,7 @@ public class ArraySchema extends Schema {
             for (Object contained : uniqueItems) {
                 if (ObjectComparator.deepEquals(contained, item)) {
                     return Optional.of(
-                            new ValidationException(this, "array items are not unique", "uniqueItems"));
+                        new ValidationException(this, "array items are not unique", "uniqueItems"));
                 }
             }
             uniqueItems.add(item);
