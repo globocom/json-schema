@@ -1,46 +1,43 @@
 package org.everit.json.schema.internal;
 
 import org.everit.json.schema.Schema;
-import org.json.JSONWriter;
+import org.json.JSONException;
 
 import java.io.Writer;
 import java.util.Map;
-
-import static java.util.Objects.requireNonNull;
 
 public class JSONPrinter {
 
     private final JSONWriter writer;
 
     public JSONPrinter(final Writer writer) {
-        this(new JSONWriter(writer));
+        if (writer == null) {
+            throw new NullPointerException("writer cannot be null");
+        }
+        this.writer = new JSONWriter(writer);
     }
 
-    public JSONPrinter(final JSONWriter writer) {
-        this.writer = requireNonNull(writer, "writer cannot be null");
-    }
-
-    public JSONPrinter key(final String key) {
+    public JSONPrinter key(final String key) throws JSONException {
         writer.key(key);
         return this;
     }
 
-    public JSONPrinter value(final Object value) {
+    public JSONPrinter value(final Object value) throws JSONException {
         writer.value(value);
         return this;
     }
 
-    public JSONPrinter object() {
+    public JSONPrinter object() throws JSONException {
         writer.object();
         return this;
     }
 
-    public JSONPrinter endObject() {
+    public JSONPrinter endObject() throws JSONException {
         writer.endObject();
         return this;
     }
 
-    public JSONPrinter ifPresent(final String key, final Object value) {
+    public JSONPrinter ifPresent(final String key, final Object value) throws JSONException {
         if (value != null) {
             key(key);
             value(value);
@@ -48,7 +45,7 @@ public class JSONPrinter {
         return this;
     }
 
-    public JSONPrinter ifTrue(final String key, final Boolean value) {
+    public JSONPrinter ifTrue(final String key, final Boolean value) throws JSONException {
         if (value != null && value) {
             key(key);
             value(value);
@@ -56,24 +53,24 @@ public class JSONPrinter {
         return this;
     }
 
-    public JSONPrinter array() {
+    public JSONPrinter array() throws JSONException {
         writer.array();
         return this;
     }
 
-    public JSONPrinter endArray() {
+    public JSONPrinter endArray() throws JSONException {
         writer.endArray();
         return this;
     }
 
-    public void ifFalse(String key, Boolean value) {
+    public void ifFalse(String key, Boolean value) throws JSONException {
         if (value != null && !value) {
             writer.key(key);
             writer.value(value);
         }
     }
 
-    public <K> void printSchemaMap(Map<K, Schema> input) {
+    public <K> void printSchemaMap(Map<K, Schema> input) throws JSONException {
         object();
 
         for (Map.Entry<K, Schema> entry : input.entrySet()) {

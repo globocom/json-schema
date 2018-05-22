@@ -2,8 +2,8 @@ package org.everit.json.schema.internal;
 
 import org.everit.json.schema.NullSchema;
 import org.everit.json.schema.Schema;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,13 +22,13 @@ public class JSONPrinterTest {
         buffer = new StringWriter();
     }
 
-    private JSONObject actualObj() {
+    private JSONObject actualObj() throws JSONException {
         return new JSONObject(buffer.toString());
     }
 
     @Test
     public void constructor() {
-        new JSONPrinter(new JSONWriter(new StringWriter()));
+        new JSONPrinter(new StringWriter());
     }
 
     private JSONPrinter subject() {
@@ -36,7 +36,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void keyValueDelegates() {
+    public void keyValueDelegates() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.key("mykey");
@@ -46,7 +46,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifPresentPrints() {
+    public void ifPresentPrints() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifPresent("mykey", "myvalue");
@@ -55,7 +55,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifPresentOmits() {
+    public void ifPresentOmits() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifPresent("mykey", null);
@@ -64,7 +64,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifTruePints() {
+    public void ifTruePints() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifTrue("uniqueItems", true);
@@ -73,7 +73,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifTrueHandlesNullAsFalse() {
+    public void ifTrueHandlesNullAsFalse() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifTrue("uniqueItems", null);
@@ -82,7 +82,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifTrueOmits() {
+    public void ifTrueOmits() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifTrue("uniqueItems", false);
@@ -91,7 +91,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifFalsePrints() {
+    public void ifFalsePrints() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifFalse("mykey", false);
@@ -100,7 +100,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifFalseOmits() {
+    public void ifFalseOmits() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifFalse("mykey", true);
@@ -109,7 +109,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void ifFalseHandlesNullAsTrue() {
+    public void ifFalseHandlesNullAsTrue() throws JSONException {
         JSONPrinter subject = subject();
         subject.object();
         subject.ifFalse("mykey", null);
@@ -118,7 +118,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void arraySupport() {
+    public void arraySupport() throws Exception {
         JSONPrinter subject = subject();
         subject.array();
         subject.value(true);
@@ -127,7 +127,7 @@ public class JSONPrinterTest {
     }
 
     @Test
-    public void printSchemaMap() {
+    public void printSchemaMap() throws Exception {
         HashMap<Number, Schema> input = new HashMap<Number, Schema>();
         input.put(2, NullSchema.INSTANCE);
         subject().printSchemaMap(input);
