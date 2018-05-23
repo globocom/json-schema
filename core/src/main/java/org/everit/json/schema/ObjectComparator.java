@@ -20,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Deep-equals implementation on primitive wrappers, {@link JSONObject} and {@link JSONArray}.
@@ -35,18 +34,16 @@ public final class ObjectComparator {
      * @return {@code true} if the two objects are equal, {@code false} otherwise
      */
     public static boolean deepEquals(final Object obj1, final Object obj2) throws JSONException {
-        if (obj1 instanceof JSONArray) {
-            if (!(obj2 instanceof JSONArray)) {
-                return false;
-            }
-            return deepEqualArrays((JSONArray) obj1, (JSONArray) obj2);
-        } else if (obj1 instanceof JSONObject) {
-            if (!(obj2 instanceof JSONObject)) {
-                return false;
-            }
-            return deepEqualObjects((JSONObject) obj1, (JSONObject) obj2);
+        if (obj1 == obj2) {
+            return true;
         }
-        return Objects.equals(obj1, obj2);
+        if (obj1 instanceof JSONArray) {
+            return obj2 instanceof JSONArray && deepEqualArrays((JSONArray) obj1, (JSONArray) obj2);
+        }
+        if (obj1 instanceof JSONObject) {
+            return obj2 instanceof JSONObject && deepEqualObjects((JSONObject) obj1, (JSONObject) obj2);
+        }
+        return obj1 != null && obj2 != null && obj1.equals(obj2);
     }
 
     private static boolean deepEqualArrays(final JSONArray arr1, final JSONArray arr2) throws JSONException {

@@ -49,14 +49,12 @@ public class EmptySchema extends Schema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o instanceof EmptySchema) {
-            EmptySchema that = (EmptySchema) o;
-            return that.canEqual(this) && super.equals(that);
-        } else {
+        if (this == o) return true;
+        if (!(o instanceof EmptySchema)) {
             return false;
         }
+        EmptySchema that = (EmptySchema) o;
+        return that.canEqual(this) && super.equals(that);
     }
 
     @Override

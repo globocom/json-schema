@@ -20,7 +20,6 @@ import org.json.JSONException;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -94,28 +93,26 @@ public class EnumSchema extends Schema {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o instanceof EnumSchema) {
-            EnumSchema that = (EnumSchema) o;
-            return that.canEqual(this) &&
-                    Objects.equals(possibleValues, that.possibleValues) &&
-                    super.equals(that);
-        } else {
-            return false;
-        }
+    protected boolean canEqual(final Object other) {
+        return other instanceof EnumSchema;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof EnumSchema)) return false;
+
+        EnumSchema that = (EnumSchema) o;
+        return that.canEqual(this)
+                && possibleValues != null ? possibleValues.equals(that.possibleValues) : that.possibleValues == null
+                && super.equals(that);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), possibleValues);
-    }
-
-    @Override
-    protected boolean canEqual(final Object other) {
-        return other instanceof EnumSchema;
+        int result = super.hashCode();
+        result = 31 * result + (possibleValues != null ? possibleValues.hashCode() : 0);
+        return result;
     }
 
 }

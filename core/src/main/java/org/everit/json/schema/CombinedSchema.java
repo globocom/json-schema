@@ -19,13 +19,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
+
 import org.everit.json.schema.internal.JSONPrinter;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import static java.lang.String.format;
 import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
@@ -240,18 +240,14 @@ public class CombinedSchema extends Schema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o instanceof CombinedSchema) {
-            CombinedSchema that = (CombinedSchema) o;
-            return that.canEqual(this) &&
-                    Objects.equals(subschemas, that.subschemas) &&
-                    Objects.equals(criterion, that.criterion) &&
-                    super.equals(that);
-        } else {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || !(o instanceof CombinedSchema)) return false;
+
+        CombinedSchema that = (CombinedSchema) o;
+        return that.canEqual(this)
+                && (subschemas != null ? subschemas.equals(that.subschemas) : that.subschemas == null)
+                && (criterion != null ? criterion.equals(that.criterion) : that.criterion == null)
+                && super.equals(that);
     }
 
     @Override
@@ -266,7 +262,10 @@ public class CombinedSchema extends Schema {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subschemas, criterion);
+        int result = super.hashCode();
+        result = 31 * result + (subschemas != null ? subschemas.hashCode() : 0);
+        result = 31 * result + (criterion != null ? criterion.hashCode() : 0);
+        return result;
     }
 
     @Override

@@ -527,33 +527,38 @@ public class ObjectSchema extends Schema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o instanceof ObjectSchema) {
-            ObjectSchema that = (ObjectSchema) o;
-            return that.canEqual(this) &&
-                    additionalProperties == that.additionalProperties &&
-                    requiresObject == that.requiresObject &&
-                    Objects.equals(propertySchemas, that.propertySchemas) &&
-                    Objects.equals(schemaOfAdditionalProperties, that.schemaOfAdditionalProperties) &&
-                    Objects.equals(requiredProperties, that.requiredProperties) &&
-                    Objects.equals(minProperties, that.minProperties) &&
-                    Objects.equals(maxProperties, that.maxProperties) &&
-                    Objects.equals(propertyDependencies, that.propertyDependencies) &&
-                    Objects.equals(schemaDependencies, that.schemaDependencies) &&
-                    Objects.equals(patternProperties, that.patternProperties) &&
-                    super.equals(that);
-        } else {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ObjectSchema that = (ObjectSchema) o;
+        return that.canEqual(this)
+                && (additionalProperties != that.additionalProperties)
+                && (requiresObject == that.requiresObject)
+                && (propertySchemas != null ? propertySchemas.equals(that.propertySchemas) : that.propertySchemas == null)
+                && (schemaOfAdditionalProperties != null ? schemaOfAdditionalProperties.equals(that.schemaOfAdditionalProperties) : that.schemaOfAdditionalProperties == null)
+                && (requiredProperties != null ? requiredProperties.equals(that.requiredProperties) : that.requiredProperties == null)
+                && (minProperties != null ? minProperties.equals(that.minProperties) : that.minProperties == null)
+                && (maxProperties != null ? maxProperties.equals(that.maxProperties) : that.maxProperties == null)
+                && (propertyDependencies != null ? propertyDependencies.equals(that.propertyDependencies) : that.propertyDependencies == null)
+                && (schemaDependencies != null ? schemaDependencies.equals(that.schemaDependencies) : that.schemaDependencies == null)
+                && (patternProperties != null ? patternProperties.equals(that.patternProperties) : that.patternProperties == null)
+                && super.equals(that);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), propertySchemas, additionalProperties, schemaOfAdditionalProperties,
-                requiredProperties,
-                minProperties, maxProperties, propertyDependencies, schemaDependencies, requiresObject, patternProperties);
+        int result = super.hashCode();
+        result = 31 * result + (propertySchemas != null ? propertySchemas.hashCode() : 0);
+        result = 31 * result + (additionalProperties ? 1 : 0);
+        result = 31 * result + (schemaOfAdditionalProperties != null ? schemaOfAdditionalProperties.hashCode() : 0);
+        result = 31 * result + (requiredProperties != null ? requiredProperties.hashCode() : 0);
+        result = 31 * result + (minProperties != null ? minProperties.hashCode() : 0);
+        result = 31 * result + (maxProperties != null ? maxProperties.hashCode() : 0);
+        result = 31 * result + (propertyDependencies != null ? propertyDependencies.hashCode() : 0);
+        result = 31 * result + (schemaDependencies != null ? schemaDependencies.hashCode() : 0);
+        result = 31 * result + (requiresObject ? 1 : 0);
+        result = 31 * result + (patternProperties != null ? patternProperties.hashCode() : 0);
+        return result;
     }
 
     @Override

@@ -16,9 +16,6 @@
 package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
-
-import java.util.Objects;
-
 import org.json.JSONException;
 
 import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
@@ -75,21 +72,21 @@ public class NotSchema extends Schema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o instanceof NotSchema) {
-            NotSchema that = (NotSchema) o;
-            return that.canEqual(this) &&
-                    Objects.equals(mustNotMatch, that.mustNotMatch) &&
-                    super.equals(that);
-        } else {
+        if (this == o) return true;
+        if (!(o instanceof NotSchema)) {
             return false;
         }
+        NotSchema that = (NotSchema) o;
+        return that.canEqual(this) &&
+                mustNotMatch != null && mustNotMatch.equals(that.mustNotMatch) &&
+                super.equals(that);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), mustNotMatch);
+        int result = super.hashCode();
+        result = 31 * result + (mustNotMatch != null ? mustNotMatch.hashCode() : 0);
+        return result;
     }
 
     @Override

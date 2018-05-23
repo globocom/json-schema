@@ -185,20 +185,17 @@ public class StringSchema extends Schema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o instanceof StringSchema) {
-            StringSchema that = (StringSchema) o;
-            return that.canEqual(this) &&
-                    requiresString == that.requiresString &&
-                    Objects.equals(minLength, that.minLength) &&
-                    Objects.equals(maxLength, that.maxLength) &&
-                    Objects.equals(patternIfNotNull(pattern), patternIfNotNull(that.pattern)) &&
-                    Objects.equals(formatValidator, that.formatValidator) &&
-                    super.equals(that);
-        } else {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || !(o instanceof StringSchema)) return false;
+
+        StringSchema that = (StringSchema) o;
+        return that.canEqual(this)
+                && requiresString == that.requiresString
+                && (minLength != null ? minLength.equals(that.minLength) : that.minLength == null)
+                && (maxLength != null ? maxLength.equals(that.maxLength) : that.maxLength == null)
+                && (pattern != null ? pattern.equals(that.pattern) : that.pattern == null)
+                && (formatValidator != null ? formatValidator.equals(that.formatValidator) : that.formatValidator == null)
+                && super.equals(that);
     }
 
     private String patternIfNotNull(Pattern pattern) {
@@ -215,7 +212,13 @@ public class StringSchema extends Schema {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), minLength, maxLength, pattern, requiresString, formatValidator);
+        int result = super.hashCode();
+        result = 31 * result + (minLength != null ? minLength.hashCode() : 0);
+        result = 31 * result + (maxLength != null ? maxLength.hashCode() : 0);
+        result = 31 * result + (pattern != null ? pattern.hashCode() : 0);
+        result = 31 * result + (requiresString ? 1 : 0);
+        result = 31 * result + (formatValidator != null ? formatValidator.hashCode() : 0);
+        return result;
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.json.JSONWriter;
 import org.json.JSONException;
 
 import java.io.StringWriter;
-import java.util.Objects;
 
 /**
  * Superclass of all other schema validator classes of this package.
@@ -132,27 +131,6 @@ public abstract class Schema {
         return false;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o instanceof Schema) {
-            Schema schema = (Schema) o;
-            return schema.canEqual(this) &&
-                    Objects.equals(title, schema.title) &&
-                    Objects.equals(description, schema.description) &&
-                    Objects.equals(id, schema.id);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, description, id);
-    }
-
     public String getTitle() {
         return title;
     }
@@ -208,6 +186,14 @@ public abstract class Schema {
         return w.getBuffer().toString();
     }
 
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
+    }
+
     /**
      * Since we add state in subclasses, but want those subclasses to be non final, this allows us to
      * have equals methods that satisfy the equals contract.
@@ -216,5 +202,17 @@ public abstract class Schema {
      */
     protected boolean canEqual(final Object other) {
         return (other instanceof Schema);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Schema)) return false;
+
+        Schema that = (Schema) o;
+        return that.canEqual(this)
+                && (title != null ? title.equals(that.title) : that.title == null)
+                && (description != null ? description.equals(that.description) : that.description == null)
+                && (id != null ? id.equals(that.id) : that.id == null);
     }
 }

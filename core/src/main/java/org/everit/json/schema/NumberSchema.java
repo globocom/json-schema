@@ -19,7 +19,6 @@ import org.everit.json.schema.internal.JSONPrinter;
 import org.json.JSONException;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
  * Number schema validator.
@@ -202,26 +201,6 @@ public class NumberSchema extends Schema {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o instanceof NumberSchema) {
-            NumberSchema that = (NumberSchema) o;
-            return that.canEqual(this) &&
-                    requiresNumber == that.requiresNumber &&
-                    exclusiveMinimum == that.exclusiveMinimum &&
-                    exclusiveMaximum == that.exclusiveMaximum &&
-                    requiresInteger == that.requiresInteger &&
-                    Objects.equals(minimum, that.minimum) &&
-                    Objects.equals(maximum, that.maximum) &&
-                    Objects.equals(multipleOf, that.multipleOf) &&
-                    super.equals(that);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     void describePropertiesTo(JSONPrinter writer) throws JSONException {
         if (requiresInteger) {
             writer.key("type").value("integer");
@@ -236,9 +215,33 @@ public class NumberSchema extends Schema {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof NumberSchema)) return false;
+
+        NumberSchema that = (NumberSchema) o;
+        return that.canEqual(this)
+                && requiresNumber == that.requiresNumber
+                && exclusiveMinimum == that.exclusiveMinimum
+                && exclusiveMaximum == that.exclusiveMaximum
+                && requiresInteger == that.requiresInteger
+                && (minimum != null ? minimum.equals(that.minimum) : that.minimum == null)
+                && (maximum != null ? maximum.equals(that.maximum) : that.maximum == null)
+                && (multipleOf != null ? multipleOf.equals(that.multipleOf) : that.multipleOf == null)
+                && super.equals(that);
+    }
+
+    @Override
     public int hashCode() {
-        return Objects
-                .hash(super.hashCode(), requiresNumber, minimum, maximum, multipleOf, exclusiveMinimum, exclusiveMaximum, requiresInteger);
+        int result = super.hashCode();
+        result = 31 * result + (requiresNumber ? 1 : 0);
+        result = 31 * result + (minimum != null ? minimum.hashCode() : 0);
+        result = 31 * result + (maximum != null ? maximum.hashCode() : 0);
+        result = 31 * result + (multipleOf != null ? multipleOf.hashCode() : 0);
+        result = 31 * result + (exclusiveMinimum ? 1 : 0);
+        result = 31 * result + (exclusiveMaximum ? 1 : 0);
+        result = 31 * result + (requiresInteger ? 1 : 0);
+        return result;
     }
 
     @Override

@@ -105,22 +105,22 @@ public class ReferenceSchema extends Schema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o instanceof ReferenceSchema) {
-            ReferenceSchema that = (ReferenceSchema) o;
-            return that.canEqual(this) &&
-                    Objects.equals(refValue, that.refValue) &&
-                    Objects.equals(referredSchema, that.referredSchema) &&
-                    super.equals(that);
-        } else {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || !(o instanceof ReferenceSchema)) return false;
+
+        ReferenceSchema that = (ReferenceSchema) o;
+        return that.canEqual(this)
+                && (refValue != null ? refValue.equals(that.refValue) : that.refValue == null)
+                && (referredSchema != null ? referredSchema.equals(that.referredSchema) : that.referredSchema == null)
+                && super.equals(that);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), referredSchema, refValue);
+        int result = super.hashCode();
+        result = 31 * result + (refValue != null ? refValue.hashCode() : 0);
+        result = 31 * result + (referredSchema != null ? referredSchema.hashCode() : 0);
+        return result;
     }
 
     @Override
