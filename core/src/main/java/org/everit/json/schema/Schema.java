@@ -16,7 +16,7 @@
 package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
-import org.json.JSONWriter;
+import org.everit.json.schema.internal.JSONWriter;
 import org.json.JSONException;
 
 import java.io.StringWriter;
