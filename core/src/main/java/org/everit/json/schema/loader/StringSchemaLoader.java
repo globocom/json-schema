@@ -1,12 +1,14 @@
 package org.everit.json.schema.loader;
 
 import com.google.common.base.Optional;
+
 import org.everit.json.schema.Consumer;
 import org.everit.json.schema.FormatValidator;
 import org.everit.json.schema.StringSchema;
 import org.json.JSONException;
 
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
+
 
 /**
  * @author erosb

@@ -22,7 +22,8 @@ import org.everit.json.schema.internal.IPV4Validator;
 import org.everit.json.schema.internal.IPV6Validator;
 import org.everit.json.schema.internal.URIFormatValidator;
 
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
+
 
 /**
  * Implementations perform the validation against the "format" keyword (see JSON Schema spec section

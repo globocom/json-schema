@@ -19,8 +19,9 @@ import org.everit.json.schema.internal.JSONPrinter;
 
 import java.util.Objects;
 
-import static java.util.Objects.requireNonNull;
 import org.json.JSONException;
+
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
 
 /**
  * {@code Not} schema validator.

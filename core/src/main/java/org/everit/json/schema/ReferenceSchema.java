@@ -16,11 +16,9 @@
 package org.everit.json.schema;
 
 import org.everit.json.schema.internal.JSONPrinter;
-
-import java.util.Objects;
-
-import static java.util.Objects.requireNonNull;
 import org.json.JSONException;
+
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
 
 /**
  * This class is used by {@link org.everit.json.schema.loader.SchemaLoader} to resolve JSON pointers

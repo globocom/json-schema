@@ -4,7 +4,8 @@ import com.google.common.base.Optional;
 import org.everit.json.schema.AbstractFormatValidator;
 import org.everit.json.schema.FormatValidator;
 
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
+
 
 public class WrappingFormatValidator extends AbstractFormatValidator {
 

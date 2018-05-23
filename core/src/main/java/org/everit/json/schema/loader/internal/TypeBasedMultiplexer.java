@@ -30,7 +30,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
+
 
 /**
  * Used by {@code org.everit.json.schema.loader.SchemaLoader.SchemaLoader} during schema loading for

@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
+
 
 /**
  * {@code String} schema validator.

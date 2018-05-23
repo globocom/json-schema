@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
 
 /**
  * Validator for {@code allOf}, {@code oneOf}, {@code anyOf} schemas.

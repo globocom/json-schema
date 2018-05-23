@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
 import static org.everit.json.schema.CombinedSchema.allOf;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
 
 /**
  * @author erosb

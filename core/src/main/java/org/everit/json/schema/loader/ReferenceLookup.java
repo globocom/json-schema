@@ -11,7 +11,8 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static java.util.Objects.requireNonNull;
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
+
 
 /**
  * @author erosb
