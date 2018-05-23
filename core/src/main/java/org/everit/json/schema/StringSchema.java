@@ -20,7 +20,10 @@ import com.google.common.base.Function;
 import org.everit.json.schema.internal.JSONPrinter;
 import org.json.JSONException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;

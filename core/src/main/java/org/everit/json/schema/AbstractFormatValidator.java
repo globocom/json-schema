@@ -15,7 +15,12 @@
  */
 package org.everit.json.schema;
 
-import org.everit.json.schema.internal.*;
+import org.everit.json.schema.internal.DateTimeFormatValidator;
+import org.everit.json.schema.internal.EmailFormatValidator;
+import org.everit.json.schema.internal.HostnameFormatValidator;
+import org.everit.json.schema.internal.IPV4Validator;
+import org.everit.json.schema.internal.IPV6Validator;
+import org.everit.json.schema.internal.URIFormatValidator;
 
 import static java.util.Objects.requireNonNull;
 
