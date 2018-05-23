@@ -93,9 +93,9 @@ public class SchemaLoader {
          * and use {@link #addFormatValidator(FormatValidator)}
          */
         @Deprecated
-        public SchemaLoaderBuilder addFormatValidator(final String formatName,
-                final FormatValidator formatValidator) {
-            if (!Objects.equals(formatName, formatValidator.formatName())) {
+        public SchemaLoaderBuilder addFormatValidator(
+                final String formatName, final FormatValidator formatValidator) {
+            if (!String.valueOf(formatName).equals(formatValidator.formatName())) {
                 formatValidators.put(formatName, new WrappingFormatValidator(formatName, formatValidator));
             } else {
                 formatValidators.put(formatName, formatValidator);
