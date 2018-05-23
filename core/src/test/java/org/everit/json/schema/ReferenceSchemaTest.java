@@ -56,8 +56,8 @@ public class ReferenceSchemaTest {
         JSONObject rawSchemaJson = ResourceLoader.DEFAULT.readObj("tostring/ref.json");
         String actual = SchemaLoader.load(rawSchemaJson).toString();
         System.out.println(actual);
-        assertTrue(ObjectComparator.deepEquals(rawSchemaJson.query("/properties"),
-                new JSONObject(actual).query("/properties")));
+        assertTrue(ObjectComparator.deepEquals(rawSchemaJson.getJSONObject("properties"),
+                new JSONObject(actual).getJSONObject("properties")));
     }
 
 }
