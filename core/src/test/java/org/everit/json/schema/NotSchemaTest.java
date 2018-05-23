@@ -15,9 +15,10 @@
  */
 package org.everit.json.schema;
 
+import org.junit.Test;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
