@@ -186,14 +186,6 @@ public abstract class Schema {
         return w.getBuffer().toString();
     }
 
-    @Override
-    public int hashCode() {
-        int result = title != null ? title.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        return result;
-    }
-
     /**
      * Since we add state in subclasses, but want those subclasses to be non final, this allows us to
      * have equals methods that satisfy the equals contract.
@@ -214,5 +206,14 @@ public abstract class Schema {
                 && (title != null ? title.equals(that.title) : that.title == null)
                 && (description != null ? description.equals(that.description) : that.description == null)
                 && (id != null ? id.equals(that.id) : that.id == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (id != null ? id.hashCode() : 0);
+        return result;
     }
 }
