@@ -9,7 +9,6 @@ import org.everit.json.schema.loader.internal.ResolutionScopeChangeListener;
 import org.everit.json.schema.loader.internal.TypeBasedMultiplexer;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONPointer;
 
 import java.net.URI;
 import java.util.Map;
@@ -27,12 +26,8 @@ class LoadingState {
 
     URI id = null;
 
-    JSONPointer pointerToCurrentObj;
-
     final Map<String, ReferenceSchema.Builder> pointerSchemas;
-
     final JSONObject rootSchemaJson;
-
     final JSONObject schemaJson;
 
     LoadingState(SchemaClient httpClient,
