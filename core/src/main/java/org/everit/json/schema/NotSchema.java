@@ -74,13 +74,12 @@ public class NotSchema extends Schema {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof NotSchema)) {
-            return false;
-        }
+        if (o == null || !(o instanceof NotSchema)) return false;
+
         NotSchema that = (NotSchema) o;
-        return that.canEqual(this) &&
-                mustNotMatch != null && mustNotMatch.equals(that.mustNotMatch) &&
-                super.equals(that);
+        return  that.canEqual(this)
+                && mustNotMatch != null ? mustNotMatch.equals(that.mustNotMatch) : that.mustNotMatch == null
+                && super.equals(o);
     }
 
     @Override
