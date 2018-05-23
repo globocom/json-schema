@@ -86,8 +86,10 @@ public class EnumSchema extends Schema {
         writer.value("enum");
         writer.key("enum");
         writer.array();
-        for (Object value : possibleValues) {
-            writer.value(value);
+        if (possibleValues != null) {
+            for (Object value : possibleValues) {
+                writer.value(value);
+            }
         }
         writer.endArray();
     }

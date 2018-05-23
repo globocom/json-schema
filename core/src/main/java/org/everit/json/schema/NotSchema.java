@@ -97,7 +97,9 @@ public class NotSchema extends Schema {
 
     @Override
     void describePropertiesTo(JSONPrinter writer) throws JSONException {
-        writer.key("not");
-        mustNotMatch.describeTo(writer);
+        if (mustNotMatch != null) {
+            writer.key("not");
+            mustNotMatch.describeTo(writer);
+        }
     }
 }
