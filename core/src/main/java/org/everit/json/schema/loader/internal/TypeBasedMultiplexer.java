@@ -55,6 +55,24 @@ import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
 public class TypeBasedMultiplexer {
 
     /**
+     * Created and used by {@link TypeBasedMultiplexer} to set actions (consumers) for matching
+     * classes.
+     *
+     * @param <E> the type of the input to the operation.
+     */
+    public interface OnTypeConsumer<E> {
+
+        /**
+         * Sets the callback (consumer) to be called if the type of {@code obj} is the previously set
+         * {@code predicateClass}.
+         *
+         * @param consumer the callback to be called if the type of {@code obj} is the previously set class.
+         * @return the parent multiplexer instance
+         */
+        TypeBasedMultiplexer then(Consumer<E> consumer);
+    }
+
+    /**
      * An {@link OnTypeConsumer} implementation which wraps the action ({@code obj} consumer} set by
      * {@link #then(Consumer)} into an other consumer which maintains
      * {@link org.everit.json.schema.loader.LoadingState#id}.
@@ -106,24 +124,6 @@ public class TypeBasedMultiplexer {
     }
 
     /**
-     * Created and used by {@link TypeBasedMultiplexer} to set actions (consumers) for matching
-     * classes.
-     *
-     * @param <E> the type of the input to the operation.
-     */
-    public interface OnTypeConsumer<E> {
-
-        /**
-         * Sets the callback (consumer) to be called if the type of {@code obj} is the previously set
-         * {@code predicateClass}.
-         *
-         * @param consumer the callback to be called if the type of {@code obj} is the previously set class.
-         * @return the parent multiplexer instance
-         */
-        TypeBasedMultiplexer then(Consumer<E> consumer);
-    }
-
-    /**
      * Default implementation of {@link OnTypeConsumer}, instantiated by
      * {@link TypeBasedMultiplexer#ifIs(Class)}.
      *
@@ -150,10 +150,8 @@ public class TypeBasedMultiplexer {
     private final String keyOfObj;
 
     private final Object obj;
-
-    private URI id;
-
     private final Collection<ResolutionScopeChangeListener> scopeChangeListeners = new ArrayList<>(1);
+    private URI id;
 
     /**
      * Constructor with {@code null} {@code keyOfObj} and {@code null} {@code id}.
@@ -283,5 +281,4 @@ public class TypeBasedMultiplexer {
             listener.resolutionScopeChanged(id);
         }
     }
-
 }

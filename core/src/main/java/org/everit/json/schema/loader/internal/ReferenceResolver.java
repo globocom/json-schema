@@ -26,6 +26,9 @@ import java.net.URISyntaxException;
  */
 public final class ReferenceResolver {
 
+    private ReferenceResolver() {
+    }
+
     /**
      * Creates an absolute JSON pointer string based on a parent scope and a newly encountered pointer
      * segment ({@code id} or {@code ref} value).
@@ -60,9 +63,6 @@ public final class ReferenceResolver {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private ReferenceResolver() {
     }
 
 }

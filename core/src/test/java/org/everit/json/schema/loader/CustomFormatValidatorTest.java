@@ -29,8 +29,6 @@ import static org.junit.Assert.assertEquals;
 
 public class CustomFormatValidatorTest {
 
-    private final ResourceLoader loader = ResourceLoader.DEFAULT;
-
     static class EvenCharNumValidator extends AbstractFormatValidator {
 
         @Override
@@ -47,6 +45,7 @@ public class CustomFormatValidatorTest {
             return "evenlength";
         }
     }
+    private final ResourceLoader loader = ResourceLoader.DEFAULT;
 
     @Test
     public void test() throws Exception {

@@ -34,12 +34,12 @@ public class EmptySchema extends Schema {
 
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public EmptySchema(final Builder builder) {
         super(builder);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override

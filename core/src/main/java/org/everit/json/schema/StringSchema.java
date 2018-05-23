@@ -89,18 +89,10 @@ public class StringSchema extends Schema {
 
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     private final Integer minLength;
-
     private final Integer maxLength;
-
     private final Pattern pattern;
-
     private final boolean requiresString;
-
     private final FormatValidator formatValidator;
 
     public StringSchema() {
@@ -123,6 +115,10 @@ public class StringSchema extends Schema {
             this.pattern = null;
         }
         this.formatValidator = builder.formatValidator;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Integer getMaxLength() {

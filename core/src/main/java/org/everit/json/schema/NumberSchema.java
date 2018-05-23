@@ -86,22 +86,12 @@ public class NumberSchema extends Schema {
 
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     private final boolean requiresNumber;
-
     private final Number minimum;
-
     private final Number maximum;
-
     private final Number multipleOf;
-
     private final boolean exclusiveMinimum;
-
     private final boolean exclusiveMaximum;
-
     private final boolean requiresInteger;
 
     public NumberSchema() {
@@ -122,6 +112,10 @@ public class NumberSchema extends Schema {
         this.multipleOf = builder.multipleOf;
         this.requiresNumber = builder.requiresNumber;
         this.requiresInteger = builder.requiresInteger;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     private void checkMaximum(final double subject) {

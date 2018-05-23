@@ -24,6 +24,8 @@ import org.json.JSONObject;
  */
 public class NullSchema extends Schema {
 
+    public static final NullSchema INSTANCE = new NullSchema(builder());
+
     /**
      * Builder class for {@link NullSchema}.
      */
@@ -35,14 +37,12 @@ public class NullSchema extends Schema {
         }
     }
 
-    public static final NullSchema INSTANCE = new NullSchema(builder());
+    public NullSchema(final Builder builder) {
+        super(builder);
+    }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public NullSchema(final Builder builder) {
-        super(builder);
     }
 
     @Override

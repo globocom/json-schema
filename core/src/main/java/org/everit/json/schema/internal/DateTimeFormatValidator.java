@@ -17,6 +17,7 @@ package org.everit.json.schema.internal;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+
 import org.everit.json.schema.AbstractFormatValidator;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;

@@ -23,6 +23,8 @@ import org.json.JSONException;
  */
 public class BooleanSchema extends Schema {
 
+    public static final BooleanSchema INSTANCE = new BooleanSchema(builder());
+
     /**
      * Builder class for {@link BooleanSchema}.
      */
@@ -35,14 +37,12 @@ public class BooleanSchema extends Schema {
 
     }
 
-    public static final BooleanSchema INSTANCE = new BooleanSchema(builder());
+    public BooleanSchema(final Builder builder) {
+        super(builder);
+    }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public BooleanSchema(final Builder builder) {
-        super(builder);
     }
 
     @Override

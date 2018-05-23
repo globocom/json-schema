@@ -29,6 +29,18 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class ReferenceResolverTest {
 
+    private final String expectedOutput;
+    private final String parentScope;
+    private final String encounteredSegment;
+
+    public ReferenceResolverTest(final String testcaseName, final String expectedOutput,
+            final String parentScope,
+            final String encounteredSegment) {
+        this.expectedOutput = expectedOutput;
+        this.parentScope = parentScope;
+        this.encounteredSegment = encounteredSegment;
+    }
+
     @Parameters(name = "{0}")
     public static List<Object[]> params() {
         return Arrays.asList(
@@ -46,20 +58,6 @@ public class ReferenceResolverTest {
 
     private static Object[] parList(final String... params) {
         return params;
-    }
-
-    private final String expectedOutput;
-
-    private final String parentScope;
-
-    private final String encounteredSegment;
-
-    public ReferenceResolverTest(final String testcaseName, final String expectedOutput,
-            final String parentScope,
-            final String encounteredSegment) {
-        this.expectedOutput = expectedOutput;
-        this.parentScope = parentScope;
-        this.encounteredSegment = encounteredSegment;
     }
 
     @Test

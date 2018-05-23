@@ -57,17 +57,16 @@ public class ReferenceSchema extends Schema {
         }
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    private Schema referredSchema;
-
     private final String refValue;
+    private Schema referredSchema;
 
     public ReferenceSchema(final Builder builder) {
         super(builder);
         this.refValue = requireNonNull(builder.refValue, "refValue cannot be null");
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Override

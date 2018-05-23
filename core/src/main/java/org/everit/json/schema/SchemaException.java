@@ -18,20 +18,6 @@ public class SchemaException extends RuntimeException {
 
     private static final long serialVersionUID = 5987489689035036987L;
 
-    private static Object typeOfValue(final Object actualValue) {
-        return actualValue == null ? "null" : actualValue.getClass().getSimpleName();
-    }
-
-    private static String joinClassNames(final List<Class<?>> expectedTypes) {
-        return Joiner.on(", ").join(FluentIterable.from(expectedTypes)
-                .transform(new Function<Class<?>, String>() {
-                    @Override
-                    public String apply(Class<?> input) {
-                        return input.getSimpleName();
-                    }
-                }));
-    }
-
     public SchemaException(final String message) {
         super(message);
     }
@@ -49,6 +35,20 @@ public class SchemaException extends RuntimeException {
 
     public SchemaException(final String message, final Throwable cause) {
         super(message, cause);
+    }
+
+    private static Object typeOfValue(final Object actualValue) {
+        return actualValue == null ? "null" : actualValue.getClass().getSimpleName();
+    }
+
+    private static String joinClassNames(final List<Class<?>> expectedTypes) {
+        return Joiner.on(", ").join(FluentIterable.from(expectedTypes)
+                .transform(new Function<Class<?>, String>() {
+                    @Override
+                    public String apply(Class<?> input) {
+                        return input.getSimpleName();
+                    }
+                }));
     }
 
 }

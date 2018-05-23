@@ -57,7 +57,6 @@ class CombinedSchemaLoader {
     }
 
     private final LoadingState ls;
-
     private final SchemaLoader defaultLoader;
 
     public CombinedSchemaLoader(LoadingState ls, SchemaLoader defaultLoader) {

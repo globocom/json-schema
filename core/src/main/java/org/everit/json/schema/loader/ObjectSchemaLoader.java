@@ -40,7 +40,7 @@ class ObjectSchemaLoader {
         });
         if (ls.schemaJson.has("properties")) {
             ls.typeMultiplexer(ls.schemaJson.get("properties"))
-                .ifObject().then(new Consumer<JSONObject>() {
+                    .ifObject().then(new Consumer<JSONObject>() {
                 @Override
                 public void accept(JSONObject propertyDefs) {
                     try {
@@ -85,7 +85,7 @@ class ObjectSchemaLoader {
             if (patterns != null) {
                 for (String pattern : patterns) {
                     builder.patternProperty(pattern, defaultLoader.loadChild(patternPropsJson.getJSONObject(pattern))
-                        .build());
+                            .build());
                 }
             }
         }
@@ -103,7 +103,7 @@ class ObjectSchemaLoader {
     }
 
     private void populatePropertySchemas(JSONObject propertyDefs,
-                                         ObjectSchema.Builder builder) throws JSONException {
+            ObjectSchema.Builder builder) throws JSONException {
         String[] names = JSONObjectUtils.getNames(propertyDefs);
         if (names == null || names.length == 0) {
             return;
@@ -114,7 +114,7 @@ class ObjectSchemaLoader {
     }
 
     private void addPropertySchemaDefinition(final String keyOfObj, final Object definition,
-                                             final ObjectSchema.Builder builder) throws JSONException {
+            final ObjectSchema.Builder builder) throws JSONException {
         ls.typeMultiplexer(definition)
                 .ifObject()
                 .then(new Consumer<JSONObject>() {

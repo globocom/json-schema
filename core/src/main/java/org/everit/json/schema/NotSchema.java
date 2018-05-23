@@ -44,15 +44,15 @@ public class NotSchema extends Schema {
 
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     private final Schema mustNotMatch;
 
     public NotSchema(final Builder builder) {
         super(builder);
         this.mustNotMatch = requireNonNull(builder.mustNotMatch, "mustNotMatch cannot be null");
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Schema getMustNotMatch() {

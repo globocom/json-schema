@@ -26,22 +26,22 @@ import java.util.List;
 @RunWith(Parameterized.class)
 public class FormatValidatorTest {
 
-    @Parameters(name = "{0}")
-    public static List<Object[]> params() {
-        return Arrays.asList(
-                new Object[] { "date-time" },
-                new Object[] { "email" },
-                new Object[] { "hostname" },
-                new Object[] { "ipv6" },
-                new Object[] { "ipv4" },
-                new Object[] { "uri" }
-        );
-    }
-
     private final String formatName;
 
     public FormatValidatorTest(final String formatName) {
         this.formatName = formatName;
+    }
+
+    @Parameters(name = "{0}")
+    public static List<Object[]> params() {
+        return Arrays.asList(
+                new Object[]{"date-time"},
+                new Object[]{"email"},
+                new Object[]{"hostname"},
+                new Object[]{"ipv6"},
+                new Object[]{"ipv4"},
+                new Object[]{"uri"}
+        );
     }
 
     @Test

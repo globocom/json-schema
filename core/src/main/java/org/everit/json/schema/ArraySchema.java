@@ -34,6 +34,85 @@ import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
  */
 public class ArraySchema extends Schema {
 
+    /**
+     * Builder class for {@link ArraySchema}.
+     */
+    public static class Builder extends Schema.Builder<ArraySchema> {
+
+        private boolean requiresArray = true;
+
+        private Integer minItems;
+
+        private Integer maxItems;
+
+        private boolean uniqueItems = false;
+
+        private Schema allItemSchema;
+
+        private List<Schema> itemSchemas = null;
+
+        private boolean additionalItems = true;
+
+        private Schema schemaOfAdditionalItems;
+
+        /**
+         * Adds an item schema for tuple validation. The array items of the subject under validation
+         * will be matched to expected schemas by their index. In other words the {n}th
+         * {@code addItemSchema()} invocation defines the expected schema of the {n}th item of the array
+         * being validated.
+         *
+         * @param itemSchema the schema of the next item.
+         * @return this
+         */
+        public Builder addItemSchema(final Schema itemSchema) {
+            if (itemSchemas == null) {
+                itemSchemas = new ArrayList<>();
+            }
+            itemSchemas.add(requireNonNull(itemSchema, "itemSchema cannot be null"));
+            return this;
+        }
+
+        public Builder additionalItems(final boolean additionalItems) {
+            this.additionalItems = additionalItems;
+            return this;
+        }
+
+        public Builder allItemSchema(final Schema allItemSchema) {
+            this.allItemSchema = allItemSchema;
+            return this;
+        }
+
+        @Override
+        public ArraySchema build() {
+            return new ArraySchema(this);
+        }
+
+        public Builder maxItems(final Integer maxItems) {
+            this.maxItems = maxItems;
+            return this;
+        }
+
+        public Builder minItems(final Integer minItems) {
+            this.minItems = minItems;
+            return this;
+        }
+
+        public Builder requiresArray(final boolean requiresArray) {
+            this.requiresArray = requiresArray;
+            return this;
+        }
+
+        public Builder schemaOfAdditionalItems(final Schema schemaOfAdditionalItems) {
+            this.schemaOfAdditionalItems = schemaOfAdditionalItems;
+            return this;
+        }
+
+        public Builder uniqueItems(final boolean uniqueItems) {
+            this.uniqueItems = uniqueItems;
+            return this;
+        }
+    }
+
     private final Integer minItems;
     private final Integer maxItems;
     private final boolean uniqueItems;
@@ -291,84 +370,5 @@ public class ArraySchema extends Schema {
     @Override
     protected boolean canEqual(final Object other) {
         return other instanceof ArraySchema;
-    }
-
-    /**
-     * Builder class for {@link ArraySchema}.
-     */
-    public static class Builder extends Schema.Builder<ArraySchema> {
-
-        private boolean requiresArray = true;
-
-        private Integer minItems;
-
-        private Integer maxItems;
-
-        private boolean uniqueItems = false;
-
-        private Schema allItemSchema;
-
-        private List<Schema> itemSchemas = null;
-
-        private boolean additionalItems = true;
-
-        private Schema schemaOfAdditionalItems;
-
-        /**
-         * Adds an item schema for tuple validation. The array items of the subject under validation
-         * will be matched to expected schemas by their index. In other words the {n}th
-         * {@code addItemSchema()} invocation defines the expected schema of the {n}th item of the array
-         * being validated.
-         *
-         * @param itemSchema the schema of the next item.
-         * @return this
-         */
-        public Builder addItemSchema(final Schema itemSchema) {
-            if (itemSchemas == null) {
-                itemSchemas = new ArrayList<>();
-            }
-            itemSchemas.add(requireNonNull(itemSchema, "itemSchema cannot be null"));
-            return this;
-        }
-
-        public Builder additionalItems(final boolean additionalItems) {
-            this.additionalItems = additionalItems;
-            return this;
-        }
-
-        public Builder allItemSchema(final Schema allItemSchema) {
-            this.allItemSchema = allItemSchema;
-            return this;
-        }
-
-        @Override
-        public ArraySchema build() {
-            return new ArraySchema(this);
-        }
-
-        public Builder maxItems(final Integer maxItems) {
-            this.maxItems = maxItems;
-            return this;
-        }
-
-        public Builder minItems(final Integer minItems) {
-            this.minItems = minItems;
-            return this;
-        }
-
-        public Builder requiresArray(final boolean requiresArray) {
-            this.requiresArray = requiresArray;
-            return this;
-        }
-
-        public Builder schemaOfAdditionalItems(final Schema schemaOfAdditionalItems) {
-            this.schemaOfAdditionalItems = schemaOfAdditionalItems;
-            return this;
-        }
-
-        public Builder uniqueItems(final boolean uniqueItems) {
-            this.uniqueItems = uniqueItems;
-            return this;
-        }
     }
 }

@@ -16,9 +16,9 @@
 package org.everit.json.schema;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,63 +34,9 @@ import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
  */
 public class ValidationException extends RuntimeException {
     private static final long serialVersionUID = 6192047123024651924L;
-
-    private static int getViolationCount(final List<ValidationException> causes) {
-        int causeCount = 0;
-        for (ValidationException exception : causes) {
-            causeCount += exception.getViolationCount();
-        }
-        return Math.max(1, causeCount);
-    }
-
-    private static List<String> getAllMessages(final List<ValidationException> causes) {
-        List<String> messages = Lists.newArrayList();
-
-        for (ValidationException cause : causes) {
-            if (cause.getCausingExceptions().isEmpty()) {
-                messages.add(cause.getMessage());
-            } else {
-                messages.addAll(getAllMessages(cause.getCausingExceptions()));
-            }
-        }
-
-        return messages;
-    }
-
-    /**
-     * Sort of static factory method. It is used by {@link ObjectSchema} and {@link ArraySchema} to
-     * create {@code ValidationException}s, handling the case of multiple violations occuring during
-     * validation.
-     * <p>
-     * <ul>
-     * <li>If {@code failures} is empty, then it doesn't do anything</li>
-     * <li>If {@code failures} contains 1 exception instance, then that will be thrown</li>
-     * <li>Otherwise a new exception instance will be created, its {@link #getViolatedSchema()
-     * violated schema} will be {@code rootFailingSchema}, and its {@link #getCausingExceptions()
-     * causing exceptions} will be the {@code failures} list</li>
-     * </ul>
-     *
-     * @param rootFailingSchema the schema which detected the {@code failures}
-     * @param failures          list containing validation failures to be thrown by this method
-     */
-    public static void throwFor(final Schema rootFailingSchema,
-            final List<ValidationException> failures) {
-        int failureCount = failures.size();
-        if (failureCount == 0) {
-            return;
-        } else if (failureCount == 1) {
-            throw failures.get(0);
-        } else {
-            throw new ValidationException(rootFailingSchema, new ArrayList<>(failures));
-        }
-    }
-
     private final StringBuilder pointerToViolation;
-
     private final transient Schema violatedSchema;
-
     private final List<ValidationException> causingExceptions;
-
     private final String keyword;
 
     /**
@@ -244,6 +190,56 @@ public class ValidationException extends RuntimeException {
     public ValidationException(final Schema violatedSchema, final String message,
             final List<ValidationException> causingExceptions) {
         this(violatedSchema, new StringBuilder("#"), message, causingExceptions);
+    }
+
+    private static int getViolationCount(final List<ValidationException> causes) {
+        int causeCount = 0;
+        for (ValidationException exception : causes) {
+            causeCount += exception.getViolationCount();
+        }
+        return Math.max(1, causeCount);
+    }
+
+    private static List<String> getAllMessages(final List<ValidationException> causes) {
+        List<String> messages = Lists.newArrayList();
+
+        for (ValidationException cause : causes) {
+            if (cause.getCausingExceptions().isEmpty()) {
+                messages.add(cause.getMessage());
+            } else {
+                messages.addAll(getAllMessages(cause.getCausingExceptions()));
+            }
+        }
+
+        return messages;
+    }
+
+    /**
+     * Sort of static factory method. It is used by {@link ObjectSchema} and {@link ArraySchema} to
+     * create {@code ValidationException}s, handling the case of multiple violations occuring during
+     * validation.
+     * <p>
+     * <ul>
+     * <li>If {@code failures} is empty, then it doesn't do anything</li>
+     * <li>If {@code failures} contains 1 exception instance, then that will be thrown</li>
+     * <li>Otherwise a new exception instance will be created, its {@link #getViolatedSchema()
+     * violated schema} will be {@code rootFailingSchema}, and its {@link #getCausingExceptions()
+     * causing exceptions} will be the {@code failures} list</li>
+     * </ul>
+     *
+     * @param rootFailingSchema the schema which detected the {@code failures}
+     * @param failures          list containing validation failures to be thrown by this method
+     */
+    public static void throwFor(final Schema rootFailingSchema,
+            final List<ValidationException> failures) {
+        int failureCount = failures.size();
+        if (failureCount == 0) {
+            return;
+        } else if (failureCount == 1) {
+            throw failures.get(0);
+        } else {
+            throw new ValidationException(rootFailingSchema, new ArrayList<>(failures));
+        }
     }
 
     private String escapeFragment(final String fragment) {

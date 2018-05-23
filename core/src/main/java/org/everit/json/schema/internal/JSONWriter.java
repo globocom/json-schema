@@ -148,7 +148,7 @@ public class JSONWriter {
             }
         }
         if (value instanceof Boolean || value instanceof JSONObject
-            || value instanceof JSONArray) {
+                || value instanceof JSONArray) {
             return value.toString();
         }
         if (value instanceof Map) {
@@ -236,8 +236,8 @@ public class JSONWriter {
     private JSONWriter end(char m, char c) throws JSONException {
         if (this.mode != m) {
             throw new JSONException(m == 'a'
-                ? "Misplaced endArray."
-                : "Misplaced endObject.");
+                    ? "Misplaced endArray."
+                    : "Misplaced endObject.");
         }
         this.pop(m);
         try {
@@ -353,10 +353,10 @@ public class JSONWriter {
         }
         this.top -= 1;
         this.mode = this.top == 0
-            ? 'd'
-            : this.stack[this.top - 1] == null
-            ? 'a'
-            : 'k';
+                ? 'd'
+                : this.stack[this.top - 1] == null
+                ? 'a'
+                : 'k';
     }
 
     /**

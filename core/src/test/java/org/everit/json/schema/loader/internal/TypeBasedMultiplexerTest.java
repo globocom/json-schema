@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@SuppressWarnings("ALL")
 public class TypeBasedMultiplexerTest {
 
     @Test

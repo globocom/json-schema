@@ -1,6 +1,7 @@
 package org.everit.json.schema.loader.internal;
 
 import com.google.common.base.Optional;
+
 import org.everit.json.schema.AbstractFormatValidator;
 import org.everit.json.schema.FormatValidator;
 

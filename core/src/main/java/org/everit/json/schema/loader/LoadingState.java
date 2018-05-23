@@ -1,6 +1,7 @@
 package org.everit.json.schema.loader;
 
 import com.google.common.base.Optional;
+
 import org.everit.json.schema.Consumer;
 import org.everit.json.schema.FormatValidator;
 import org.everit.json.schema.ReferenceSchema;
@@ -23,12 +24,10 @@ class LoadingState {
     final SchemaClient httpClient;
 
     final Map<String, FormatValidator> formatValidators;
-
-    URI id = null;
-
     final Map<String, ReferenceSchema.Builder> pointerSchemas;
     final JSONObject rootSchemaJson;
     final JSONObject schemaJson;
+    URI id;
 
     LoadingState(SchemaClient httpClient,
             Map<String, FormatValidator> formatValidators,
@@ -45,7 +44,7 @@ class LoadingState {
     }
 
     <E> void ifPresent(final String key, final Class<E> expectedType,
-                       final Consumer<E> consumer) throws JSONException {
+            final Consumer<E> consumer) throws JSONException {
         if (schemaJson.has(key)) {
             @SuppressWarnings("unchecked")
             E value = (E) schemaJson.get(key);

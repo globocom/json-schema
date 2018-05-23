@@ -19,6 +19,12 @@ import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
  */
 class ReferenceLookup {
 
+    private LoadingState ls;
+
+    public ReferenceLookup(LoadingState ls) {
+        this.ls = requireNonNull(ls, "ls cannot eb null");
+    }
+
     /**
      * Underscore-like extend function. Merges the properties of {@code additional} and
      * {@code original}. Neither {@code additional} nor {@code original} will be modified, but the
@@ -42,12 +48,6 @@ class ReferenceLookup {
             rval.put(name, additional.get(name));
         }
         return rval;
-    }
-
-    private LoadingState ls;
-
-    public ReferenceLookup(LoadingState ls) {
-        this.ls = requireNonNull(ls, "ls cannot eb null");
     }
 
     /**
@@ -99,17 +99,17 @@ class ReferenceLookup {
         }
         boolean isExternal = !absPointerString.startsWith("#");
         JSONPointer pointer = isExternal
-            ? JSONPointer.forURL(ls.httpClient, absPointerString)
-            : JSONPointer.forDocument(ls.rootSchemaJson, absPointerString);
+                ? JSONPointer.forURL(ls.httpClient, absPointerString)
+                : JSONPointer.forDocument(ls.rootSchemaJson, absPointerString);
         ReferenceSchema.Builder refBuilder = ReferenceSchema.builder()
-            .refValue(relPointerString);
+                .refValue(relPointerString);
         ls.pointerSchemas.put(absPointerString, refBuilder);
         JSONPointer.QueryResult result = pointer.query();
         JSONObject resultObject = extend(withoutRef(ctx), result.getQueryResult());
         SchemaLoader childLoader = ls.initChildLoader()
-            .resolutionScope(isExternal ? withoutFragment(absPointerString) : ls.id)
-            .schemaJson(resultObject)
-            .rootSchemaJson(result.getContainingDocument()).build();
+                .resolutionScope(isExternal ? withoutFragment(absPointerString) : ls.id)
+                .schemaJson(resultObject)
+                .rootSchemaJson(result.getContainingDocument()).build();
         Schema referredSchema = childLoader.load().build();
         refBuilder.build().setReferredSchema(referredSchema);
         return refBuilder;

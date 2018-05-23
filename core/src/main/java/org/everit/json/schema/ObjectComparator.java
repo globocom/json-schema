@@ -26,6 +26,9 @@ import java.util.Arrays;
  */
 public final class ObjectComparator {
 
+    private ObjectComparator() {
+    }
+
     /**
      * Deep-equals implementation on primitive wrappers, {@link JSONObject} and {@link JSONArray}.
      *
@@ -81,9 +84,6 @@ public final class ObjectComparator {
             }
         }
         return true;
-    }
-
-    private ObjectComparator() {
     }
 
 }

@@ -16,6 +16,7 @@
 package org.everit.json.schema.loader.internal;
 
 import com.google.common.base.Throwables;
+
 import org.everit.json.schema.loader.SchemaClient;
 
 import java.io.IOException;

@@ -50,15 +50,15 @@ public class EnumSchema extends Schema {
         }
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     private final Set<Object> possibleValues;
 
     public EnumSchema(final Builder builder) {
         super(builder);
         possibleValues = Collections.unmodifiableSet(new HashSet<>(builder.possibleValues));
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Set<Object> getPossibleValues() {

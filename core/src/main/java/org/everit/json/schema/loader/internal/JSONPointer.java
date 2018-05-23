@@ -79,6 +79,14 @@ public class JSONPointer {
 
     }
 
+    private final Supplier<JSONObject> documentProvider;
+    private final String fragment;
+
+    public JSONPointer(final Supplier<JSONObject> documentProvider, final String fragment) {
+        this.documentProvider = documentProvider;
+        this.fragment = fragment;
+    }
+
     private static JSONObject executeWith(final SchemaClient client, final String url) {
         String resp = null;
         BufferedReader buffReader = null;
@@ -142,15 +150,6 @@ public class JSONPointer {
                 return JSONPointer.executeWith(schemaClient, toBeQueried);
             }
         }, fragment);
-    }
-
-    private final Supplier<JSONObject> documentProvider;
-
-    private final String fragment;
-
-    public JSONPointer(final Supplier<JSONObject> documentProvider, final String fragment) {
-        this.documentProvider = documentProvider;
-        this.fragment = fragment;
     }
 
     /**

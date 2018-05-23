@@ -17,6 +17,7 @@ package org.everit.json.schema.internal;
 
 import com.google.common.base.Optional;
 import com.google.common.net.InternetDomainName;
+
 import org.everit.json.schema.AbstractFormatValidator;
 
 /**

@@ -175,37 +175,6 @@ public class SchemaLoader {
 
     private static final List<String> STRING_SCHEMA_PROPS = asList("minLength", "maxLength",
             "pattern", "format");
-
-    public static SchemaLoaderBuilder builder() {
-        return new SchemaLoaderBuilder();
-    }
-
-    /**
-     * Loads a JSON schema to a schema validator using a {@link DefaultSchemaClient default HTTP
-     * client}.
-     *
-     * @param schemaJson the JSON representation of the schema.
-     * @return the schema validator object
-     */
-    public static Schema load(final JSONObject schemaJson) throws JSONException {
-        return SchemaLoader.load(schemaJson, new DefaultSchemaClient());
-    }
-
-    /**
-     * Creates Schema instance from its JSON representation.
-     *
-     * @param schemaJson the JSON representation of the schema.
-     * @param httpClient the HTTP client to be used for resolving remote JSON references.
-     * @return the created schema
-     */
-    public static Schema load(final JSONObject schemaJson, final SchemaClient httpClient) throws JSONException {
-        SchemaLoader loader = builder()
-                .schemaJson(schemaJson)
-                .httpClient(httpClient)
-                .build();
-        return loader.load().build();
-    }
-
     private final LoadingState ls;
 
     /**
@@ -247,6 +216,36 @@ public class SchemaLoader {
                 .resolutionScope(id)
                 .httpClient(httpClient)
                 .pointerSchemas(pointerSchemas));
+    }
+
+    public static SchemaLoaderBuilder builder() {
+        return new SchemaLoaderBuilder();
+    }
+
+    /**
+     * Loads a JSON schema to a schema validator using a {@link DefaultSchemaClient default HTTP
+     * client}.
+     *
+     * @param schemaJson the JSON representation of the schema.
+     * @return the schema validator object
+     */
+    public static Schema load(final JSONObject schemaJson) throws JSONException {
+        return SchemaLoader.load(schemaJson, new DefaultSchemaClient());
+    }
+
+    /**
+     * Creates Schema instance from its JSON representation.
+     *
+     * @param schemaJson the JSON representation of the schema.
+     * @param httpClient the HTTP client to be used for resolving remote JSON references.
+     * @return the created schema
+     */
+    public static Schema load(final JSONObject schemaJson, final SchemaClient httpClient) throws JSONException {
+        SchemaLoader loader = builder()
+                .schemaJson(schemaJson)
+                .httpClient(httpClient)
+                .build();
+        return loader.load().build();
     }
 
     private CombinedSchema.Builder buildAnyOfSchemaForMultipleTypes() throws JSONException {

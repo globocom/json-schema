@@ -16,6 +16,7 @@
 package org.everit.json.schema.internal;
 
 import com.google.common.base.Optional;
+
 import org.apache.commons.validator.routines.EmailValidator;
 import org.everit.json.schema.AbstractFormatValidator;
 
