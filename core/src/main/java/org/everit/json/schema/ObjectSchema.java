@@ -510,7 +510,7 @@ public class ObjectSchema extends Schema {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof ObjectSchema)) return false;
 
         ObjectSchema that = (ObjectSchema) o;
         return that.canEqual(this)
