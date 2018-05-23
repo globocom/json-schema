@@ -27,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -400,14 +399,14 @@ public class ObjectSchema extends Schema {
 
     private List<ValidationException> testSize(final JSONObject subject) {
         int actualSize = subject.length();
-        if (minProperties != null && actualSize < minProperties.intValue()) {
-            return Arrays
-                    .asList(new ValidationException(this, String.format("minimum size: [%d], found: [%d]",
+        if (minProperties != null && actualSize < minProperties) {
+            return Collections.singletonList(
+                    new ValidationException(this, String.format("minimum size: [%d], found: [%d]",
                             minProperties, actualSize), "minProperties"));
         }
         if (maxProperties != null && actualSize > maxProperties.intValue()) {
-            return Arrays
-                    .asList(new ValidationException(this, String.format("maximum size: [%d], found: [%d]",
+            return Collections.singletonList(
+                    new ValidationException(this, String.format("maximum size: [%d], found: [%d]",
                             maxProperties, actualSize), "maxProperties"));
         }
         return Collections.emptyList();
