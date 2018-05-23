@@ -64,6 +64,7 @@ public class NotSchema extends Schema {
         try {
             mustNotMatch.validate(subject);
         } catch (ValidationException e) {
+            e.printStackTrace();
             return;
         }
         throw new ValidationException(this, "subject must not be valid against schema " + mustNotMatch,
