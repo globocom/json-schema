@@ -15,22 +15,46 @@
  */
 package org.everit.json.schema;
 
+import org.junit.Ignore;
 import org.junit.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+
+import static org.junit.Assert.assertEquals;
 
 public class NotSchemaTest {
 
-  @Test
-  public void failure() {
-    NotSchema subject = NotSchema.builder().mustNotMatch(BooleanSchema.INSTANCE).build();
-    TestSupport.failureOf(subject)
-        .input(true)
-        .expectedKeyword("not")
-        .expect();
-  }
+    @Test
+    public void failure() {
+        NotSchema subject = NotSchema.builder().mustNotMatch(BooleanSchema.INSTANCE).build();
+        TestSupport.failureOf(subject)
+                .input(true)
+                .expectedKeyword("not")
+                .expect();
+    }
 
-  @Test
-  public void success() {
-    NotSchema.builder().mustNotMatch(BooleanSchema.INSTANCE).build().validate("foo");
-  }
+    @Test
+    public void success() {
+        NotSchema.builder().mustNotMatch(BooleanSchema.INSTANCE).build().validate("foo");
+    }
+
+    @Test
+    @Ignore("TODO: Solve - Significant fields: hashCode relies on title")
+    public void equalsVerifier() {
+        EqualsVerifier.forClass(NotSchema.class)
+                .withRedefinedSuperclass()
+                .suppress(Warning.STRICT_INHERITANCE)
+                .verify();
+    }
+
+    @Test
+    public void toStringTest() {
+        NotSchema subject = NotSchema.builder()
+                .mustNotMatch(BooleanSchema.INSTANCE)
+                .build();
+        String actual = subject.toString();
+        assertEquals("{\"not\":{\"type\":\"boolean\"}}", actual);
+    }
 
 }

@@ -15,25 +15,26 @@
  */
 package org.everit.json.schema.loader.internal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.net.URL;
+import com.google.common.base.Throwables;
 
 import org.everit.json.schema.loader.SchemaClient;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * A {@link SchemaClient} implementation which uses {@link URL} for reading the remote content.
  */
-public class DefaultSchemaClient implements SchemaClient {
+public class DefaultSchemaClient extends SchemaClient {
 
-  @Override
-  public InputStream get(final String url) {
-    try {
-      return (InputStream) new URL(url).getContent();
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
+    @Override
+    public InputStream get(final String url) {
+        try {
+            return (InputStream) new URL(url).getContent();
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
     }
-  }
 
 }

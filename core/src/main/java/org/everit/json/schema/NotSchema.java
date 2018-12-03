@@ -15,52 +15,90 @@
  */
 package org.everit.json.schema;
 
-import java.util.Objects;
+import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
+
+import static org.everit.json.schema.JSONObjectUtils.requireNonNull;
 
 /**
  * {@code Not} schema validator.
  */
 public class NotSchema extends Schema {
 
-  /**
-   * Builder class for {@link NotSchema}.
-   */
-  public static class Builder extends Schema.Builder<NotSchema> {
+    /**
+     * Builder class for {@link NotSchema}.
+     */
+    public static class Builder extends Schema.Builder<NotSchema> {
 
-    private Schema mustNotMatch;
+        private Schema mustNotMatch;
+
+        @Override
+        public NotSchema build() {
+            return new NotSchema(this);
+        }
+
+        public Builder mustNotMatch(final Schema mustNotMatch) {
+            this.mustNotMatch = mustNotMatch;
+            return this;
+        }
+
+    }
+
+    private final Schema mustNotMatch;
+
+    public NotSchema(final Builder builder) {
+        super(builder);
+        this.mustNotMatch = requireNonNull(builder.mustNotMatch, "mustNotMatch cannot be null");
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Schema getMustNotMatch() {
+        return mustNotMatch;
+    }
 
     @Override
-    public NotSchema build() {
-      return new NotSchema(this);
+    public void validate(final Object subject) {
+        try {
+            mustNotMatch.validate(subject);
+        } catch (ValidationException e) {
+            e.printStackTrace();
+            return;
+        }
+        throw new ValidationException(this, "subject must not be valid against schema " + mustNotMatch,
+                "not");
     }
 
-    public Builder mustNotMatch(final Schema mustNotMatch) {
-      this.mustNotMatch = mustNotMatch;
-      return this;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof NotSchema)) return false;
+
+        NotSchema that = (NotSchema) o;
+        return  that.canEqual(this)
+                && mustNotMatch != null ? mustNotMatch.equals(that.mustNotMatch) : that.mustNotMatch == null
+                && super.equals(o);
     }
 
-  }
-
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  private final Schema mustNotMatch;
-
-  public NotSchema(final Builder builder) {
-    super(builder);
-    this.mustNotMatch = Objects.requireNonNull(builder.mustNotMatch, "mustNotMatch cannot be null");
-  }
-
-  @Override
-  public void validate(final Object subject) {
-    try {
-      mustNotMatch.validate(subject);
-    } catch (ValidationException e) {
-      return;
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (mustNotMatch != null ? mustNotMatch.hashCode() : 0);
+        return result;
     }
-    throw new ValidationException(this, "subject must not be valid against schema " + mustNotMatch,
-        "not");
-  }
 
+    @Override
+    protected boolean canEqual(Object other) {
+        return other instanceof NotSchema;
+    }
+
+    @Override
+    void describePropertiesTo(JSONPrinter writer) throws JSONException {
+        if (mustNotMatch != null) {
+            writer.key("not");
+            mustNotMatch.describeTo(writer);
+        }
+    }
 }

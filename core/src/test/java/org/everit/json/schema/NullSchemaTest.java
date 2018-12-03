@@ -18,19 +18,37 @@ package org.everit.json.schema;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+
+import static org.junit.Assert.assertEquals;
+
 public class NullSchemaTest {
 
-  @Test
-  public void failure() {
-    TestSupport.failureOf(NullSchema.INSTANCE)
-        .expectedKeyword("type")
-        .input("null")
-        .expect();
-  }
+    @Test
+    public void failure() {
+        TestSupport.failureOf(NullSchema.INSTANCE)
+                .expectedKeyword("type")
+                .input("null")
+                .expect();
+    }
 
-  @Test
-  public void success() {
-    JSONObject obj = new JSONObject("{\"a\" : null}");
-    NullSchema.INSTANCE.validate(obj.get("a"));
-  }
+    @Test
+    public void success() throws Exception {
+        JSONObject obj = new JSONObject("{\"a\" : null}");
+        NullSchema.INSTANCE.validate(obj.get("a"));
+    }
+
+    @Test
+    public void equalsVerifier() {
+        EqualsVerifier.forClass(NullSchema.class)
+                .withRedefinedSuperclass()
+                .suppress(Warning.STRICT_INHERITANCE)
+                .verify();
+    }
+
+    @Test
+    public void toStringTest() {
+        assertEquals("{\"type\":\"null\"}", NullSchema.INSTANCE.toString());
+    }
 }

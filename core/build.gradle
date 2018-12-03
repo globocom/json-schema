@@ -1,0 +1,79 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.artifactory'
+
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12'
+        classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.2.1'
+    }
+}
+
+repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: artifactory_contextUrl) {
+                authentication(userName: artifactory_user, password: artifactory_password)
+            }
+            pom.groupId = GROUP
+            pom.artifactId = ARTIFACT_ID
+            pom.version = VERSION_NAME
+            pom.project {
+                packaging = POM_PACKAGING
+            }
+        }
+    }
+}
+
+
+dependencies {
+    implementation 'com.google.guava:guava:19.0'
+    implementation 'org.threeten:threetenbp:1.3.3'
+    implementation('commons-validator:commons-validator:1.6') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'commons-logging'
+    }
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.json:json:20140107'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:2.1.8'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+

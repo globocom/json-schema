@@ -15,59 +15,61 @@
  */
 package org.everit.json.schema;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Objects;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+
+import static java.util.Objects.requireNonNull;
 
 public class IssueServlet extends HttpServlet {
-  private static final long serialVersionUID = -951266179406031349L;
+    private static final long serialVersionUID = -951266179406031349L;
 
-  private final File documentRoot;
+    private final File documentRoot;
 
-  public IssueServlet(final File documentRoot) {
-    this.documentRoot = Objects.requireNonNull(documentRoot, "documentRoot cannot be null");
-  }
-
-  @Override
-  protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-      throws ServletException, IOException {
-    System.out.println("GET " + req.getPathInfo());
-    File content = fileByPath(req.getPathInfo());
-    resp.setContentType("application/json");
-    try (
-        BufferedReader bis = new BufferedReader(
-            new InputStreamReader(new FileInputStream(content)));) {
-      String line;
-      while ((line = bis.readLine()) != null) {
-        resp.getWriter().write(line);
-      }
+    public IssueServlet(final File documentRoot) {
+        this.documentRoot = requireNonNull(documentRoot, "documentRoot cannot be null");
     }
-  }
 
-  private File fileByPath(final String pathInfo) {
-    File rval = documentRoot;
-    if (pathInfo != null && !pathInfo.equals("/") && !pathInfo.isEmpty()) {
-      String[] segments = pathInfo.trim().split("/");
-      for (String fileName : segments) {
-        if (fileName.isEmpty()) {
-          continue;
+    @Override
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
+        System.out.println("GET " + req.getPathInfo());
+        File content = fileByPath(req.getPathInfo());
+        resp.setContentType("application/json");
+        try (
+                BufferedReader bis = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(content)));) {
+            String line;
+            while ((line = bis.readLine()) != null) {
+                resp.getWriter().write(line);
+            }
         }
-        rval = Arrays.stream(rval.listFiles())
-            .filter(file -> file.getName().equals(fileName))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("file [" + pathInfo + "] not found"));
-      }
     }
-    return rval;
-  }
+
+    private File fileByPath(final String pathInfo) {
+        File rval = documentRoot;
+        if (pathInfo != null && !pathInfo.equals("/") && !pathInfo.isEmpty()) {
+            String[] segments = pathInfo.trim().split("/");
+            for (final String fileName : segments) {
+                if (fileName.isEmpty()) {
+                    continue;
+                }
+                boolean found = false;
+                for (File file : rval.listFiles()) {
+                    if (file.getName().equals(fileName)) {
+                        rval = file;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw new RuntimeException("file [" + pathInfo + "] not found");
+                }
+            }
+        }
+        return rval;
+    }
 
 }

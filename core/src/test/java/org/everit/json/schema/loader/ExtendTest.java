@@ -16,65 +16,68 @@
 package org.everit.json.schema.loader;
 
 import org.everit.json.schema.ObjectComparator;
+import org.everit.json.schema.ResourceLoader;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ExtendTest {
 
-  private static JSONObject OBJECTS;
+    private static final ResourceLoader loader = ResourceLoader.DEFAULT;
 
-  static {
-    OBJECTS = new JSONObject(new JSONTokener(
-        ExtendTest.class.getResourceAsStream("/org/everit/jsonvalidator/merge-testcases.json")));
-  }
+    private static JSONObject OBJECTS;
 
-  @Test
-  public void additionalHasMoreProps() {
-    JSONObject actual = subject().extend(get("propIsTrue"), get("empty"));
-    assertEquals(get("propIsTrue"), actual);
-  }
+    static {
+        try {
+            OBJECTS = loader.readObj("merge-testcases.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-  @Test
-  public void additionalOverridesOriginal() {
-    JSONObject actual = subject().extend(get("propIsTrue"), get("propIsFalse"));
-    assertEquals(get("propIsTrue"), actual);
-  }
+    @Test
+    public void additionalHasMoreProps() throws Exception {
+        JSONObject actual = ReferenceLookup.extend(get("propIsTrue"), get("empty"));
+        assertEquals(get("propIsTrue"), actual);
+    }
 
-  @Test
-  public void additionalPropsAreMerged() {
-    JSONObject actual = subject().extend(get("propIsTrue"), get("prop2IsFalse"));
-    assertEquals(actual, get("propTrueProp2False"));
-  }
+    @Test
+    public void additionalOverridesOriginal() throws Exception {
+        JSONObject actual = ReferenceLookup.extend(get("propIsTrue"), get("propIsFalse"));
+        assertEquals(get("propIsTrue"), actual);
+    }
 
-  private void assertEquals(final JSONObject expected, final JSONObject actual) {
-    Assert.assertTrue(ObjectComparator.deepEquals(expected, actual));
-  }
+    @Test
+    public void additionalPropsAreMerged() throws Exception {
+        JSONObject actual = ReferenceLookup.extend(get("propIsTrue"), get("prop2IsFalse"));
+        assertEquals(actual, get("propTrueProp2False"));
+    }
 
-  @Test
-  public void bothEmpty() {
-    JSONObject actual = subject().extend(get("empty"), get("empty"));
-    assertEquals(new JSONObject(), actual);
-  }
+    private void assertEquals(JSONObject expected, JSONObject actual) throws Exception {
+        Assert.assertTrue(ObjectComparator.deepEquals(expected, actual));
+    }
 
-  private JSONObject get(final String objectName) {
-    return OBJECTS.getJSONObject(objectName);
-  }
+    @Test
+    public void bothEmpty() throws Exception {
+        JSONObject actual = ReferenceLookup.extend(get("empty"), get("empty"));
+        assertEquals(new JSONObject(), actual);
+    }
 
-  @Test
-  public void multiplePropsAreMerged() {
-    JSONObject actual = subject().extend(get("multipleWithPropTrue"), get("multipleWithPropFalse"));
-    assertEquals(get("mergedMultiple"), actual);
-  }
+    private JSONObject get(String objectName) throws Exception {
+        return OBJECTS.getJSONObject(objectName);
+    }
 
-  @Test
-  public void originalPropertyRemainsUnchanged() {
-    JSONObject actual = subject().extend(get("empty"), get("propIsTrue"));
-    assertEquals(get("propIsTrue"), actual);
-  }
+    @Test
+    public void multiplePropsAreMerged() throws Exception {
+        JSONObject actual = ReferenceLookup.extend(get("multipleWithPropTrue"), get("multipleWithPropFalse"));
+        assertEquals(get("mergedMultiple"), actual);
+    }
 
-  private SchemaLoader subject() {
-    return SchemaLoader.builder().schemaJson(new JSONObject()).build();
-  }
+    @Test
+    public void originalPropertyRemainsUnchanged() throws Exception {
+        JSONObject actual = ReferenceLookup.extend(get("empty"), get("propIsTrue"));
+        assertEquals(get("propIsTrue"), actual);
+    }
+
 }

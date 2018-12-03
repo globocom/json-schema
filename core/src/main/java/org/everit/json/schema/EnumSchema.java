@@ -15,75 +15,106 @@
  */
 package org.everit.json.schema;
 
+import org.everit.json.schema.internal.JSONPrinter;
+import org.json.JSONException;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.json.JSONWriter;
-
 /**
  * Enum schema validator.
- *
  */
 public class EnumSchema extends Schema {
 
-  /**
-   * Builder class for {@link EnumSchema}.
-   */
-  public static class Builder extends Schema.Builder<EnumSchema> {
+    /**
+     * Builder class for {@link EnumSchema}.
+     */
+    public static class Builder extends Schema.Builder<EnumSchema> {
 
-    private Set<Object> possibleValues = new HashSet<>();
+        private Set<Object> possibleValues = new HashSet<>();
+
+        @Override
+        public EnumSchema build() {
+            return new EnumSchema(this);
+        }
+
+        public Builder possibleValue(final Object possibleValue) {
+            possibleValues.add(possibleValue);
+            return this;
+        }
+
+        public Builder possibleValues(final Set<Object> possibleValues) {
+            this.possibleValues = possibleValues;
+            return this;
+        }
+    }
+
+    private final Set<Object> possibleValues;
+
+    public EnumSchema(final Builder builder) {
+        super(builder);
+        possibleValues = Collections.unmodifiableSet(new HashSet<>(builder.possibleValues));
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public Set<Object> getPossibleValues() {
+        return possibleValues;
+    }
 
     @Override
-    public EnumSchema build() {
-      return new EnumSchema(this);
+    public void validate(final Object subject) {
+        for (Object val : possibleValues) {
+            try {
+                if (ObjectComparator.deepEquals(val, subject)) {
+                    //found one
+                    return;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        throw new ValidationException(this, String.format("%s is not a valid enum value", subject), "enum");
     }
 
-    public Builder possibleValue(final Object possibleValue) {
-      possibleValues.add(possibleValue);
-      return this;
+    @Override
+    void describePropertiesTo(final JSONPrinter writer) throws JSONException {
+        writer.key("type");
+        writer.value("enum");
+        writer.key("enum");
+        writer.array();
+        if (possibleValues != null) {
+            for (Object value : possibleValues) {
+                writer.value(value);
+            }
+        }
+        writer.endArray();
     }
 
-    public Builder possibleValues(final Set<Object> possibleValues) {
-      this.possibleValues = possibleValues;
-      return this;
+    @Override
+    protected boolean canEqual(final Object other) {
+        return other instanceof EnumSchema;
     }
-  }
 
-  public static Builder builder() {
-    return new Builder();
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof EnumSchema)) return false;
 
-  private final Set<Object> possibleValues;
+        EnumSchema that = (EnumSchema) o;
+        return that.canEqual(this)
+                && possibleValues != null ? possibleValues.equals(that.possibleValues) : that.possibleValues == null
+                && super.equals(that);
+    }
 
-  public EnumSchema(final Builder builder) {
-    super(builder);
-    possibleValues = Collections.unmodifiableSet(new HashSet<>(builder.possibleValues));
-  }
-
-  public Set<Object> getPossibleValues() {
-    return possibleValues;
-  }
-
-  @Override
-  public void validate(final Object subject) {
-    possibleValues
-        .stream()
-        .filter(val -> ObjectComparator.deepEquals(val, subject))
-        .findAny()
-        .orElseThrow(
-            () -> new ValidationException(this, String.format("%s is not a valid enum value",
-                subject), "enum"));
-  }
-
-  @Override
-  void describePropertiesTo(final JSONWriter writer) {
-    writer.key("type");
-    writer.value("enum");
-    writer.key("enum");
-    writer.array();
-    possibleValues.forEach(writer::value);
-    writer.endArray();
-  }
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (possibleValues != null ? possibleValues.hashCode() : 0);
+        return result;
+    }
 
 }

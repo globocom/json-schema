@@ -15,40 +15,57 @@
  */
 package org.everit.json.schema.internal;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Optional;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
-import org.everit.json.schema.FormatValidator;
+import org.everit.json.schema.AbstractFormatValidator;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeFormatterBuilder;
+import org.threeten.bp.format.DateTimeParseException;
+import org.threeten.bp.temporal.ChronoField;
+
+import java.util.List;
 
 /**
  * Implementation of the "date-time" format value.
  */
-public class DateTimeFormatValidator implements FormatValidator {
+public class DateTimeFormatValidator extends AbstractFormatValidator {
 
-  private static final String DATETIME_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssXXX";
+    private static final List<String> FORMATS_ACCEPTED = ImmutableList.of(
+            "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,9}Z"
+    );
 
-  private static final String DATETIME_FORMAT_STRING_SECFRAC = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    private static final String PARTIAL_DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
-  private SimpleDateFormat dateFormat(final String pattern) {
-    SimpleDateFormat rval = new SimpleDateFormat(pattern);
-    rval.setLenient(false);
-    return rval;
-  }
+    private static final String ZONE_OFFSET_PATTERN = "XXX";
 
-  @Override
-  public Optional<String> validate(final String subject) {
-    try {
-      dateFormat(DATETIME_FORMAT_STRING).parse(subject);
-      return Optional.empty();
-    } catch (ParseException e) {
-      try {
-        dateFormat(DATETIME_FORMAT_STRING_SECFRAC).parse(subject);
-        return Optional.empty();
-      } catch (ParseException e1) {
-        return Optional.of(String.format("[%s] is not a valid date-time", subject));
-      }
+    private static final DateTimeFormatter FORMATTER;
+
+    static {
+        final DateTimeFormatter secondsFractionFormatter = new DateTimeFormatterBuilder()
+                .appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true)
+                .toFormatter();
+
+        final DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder()
+                .appendPattern(PARTIAL_DATETIME_PATTERN)
+                .appendOptional(secondsFractionFormatter)
+                .appendPattern(ZONE_OFFSET_PATTERN);
+
+        FORMATTER = builder.toFormatter();
     }
-  }
 
+    @Override
+    public Optional<String> validate(final String subject) {
+        try {
+            FORMATTER.parse(subject);
+            return Optional.absent();
+        } catch (DateTimeParseException e) {
+            return Optional.of(String.format("[%s] is not a valid date-time. Expected %s", subject, FORMATS_ACCEPTED));
+        }
+    }
+
+    @Override
+    public String formatName() {
+        return "date-time";
+    }
 }

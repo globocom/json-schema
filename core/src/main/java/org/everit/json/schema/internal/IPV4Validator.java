@@ -15,7 +15,7 @@
  */
 package org.everit.json.schema.internal;
 
-import java.util.Optional;
+import com.google.common.base.Optional;
 
 import org.everit.json.schema.FormatValidator;
 
@@ -24,11 +24,15 @@ import org.everit.json.schema.FormatValidator;
  */
 public class IPV4Validator extends IPAddressValidator implements FormatValidator {
 
-  private static final int IPV4_LENGTH = 4;
+    private static final int IPV4_LENGTH = 4;
 
-  @Override
-  public Optional<String> validate(final String subject) {
-    return checkIpAddress(subject, IPV4_LENGTH, "[%s] is not a valid ipv4 address");
-  }
+    @Override
+    public Optional<String> validate(final String subject) {
+        return checkIpAddress(subject, IPV4_LENGTH, "[%s] is not a valid ipv4 address");
+    }
 
+    @Override
+    public String formatName() {
+        return "ipv4";
+    }
 }
