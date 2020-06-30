@@ -1,7 +1,7 @@
 .PHONY: unit-test build publish_release publish-snapshot snapshot upload-release upload-snapshot
 
 unit-test:
-	./gradlew clean test
+	./gradlew test
 
 build:
 	./gradlew clean build
@@ -9,7 +9,7 @@ build:
 upload-release:
 	./gradlew uploadArchives -Partifactory_user="${JFROG_USER}" -Partifactory_password="${JFROG_PASSWORD}" -Partifactory_contextUrl=https://globocom.jfrog.io/artifactory/horizon-release-local/
 
-publish-release: unit-test upload-release
+publish-release: build unit-test upload-release
 
 upload-snapshot:
 	./gradlew uploadArchives -Partifactory_user="${JFROG_USER}" -Partifactory_password="${JFROG_PASSWORD}" -Partifactory_contextUrl=https://globocom.jfrog.io/artifactory/horizon-snapshot-local/
