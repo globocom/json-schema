@@ -195,7 +195,7 @@ public class ObjectSchema extends Schema {
         if (names == null) {
             return FluentIterable.from(Lists.<String>newArrayList());
         } else {
-            return FluentIterable.of(names)
+            return FluentIterable.from(names)
                     .filter(new Predicate<String>() {
                         @Override
                         public boolean apply(String key) {
